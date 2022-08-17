@@ -137,8 +137,11 @@ export class EditorComponent implements OnInit {
         'text-outline-color': '#999',
         'text-valign': 'center',
         color: (ele) => {
-          console.log('KLXd ' + this.searchTerm + ' ' + ele.data().id);
-          if (this.searchTerm == ele.data().id) return 'red';
+         // console.log('KLXd ' + this.searchTerm + ' ' + ele.data().id);
+          if (this.searchTerm == ele.data().id) {
+            //ele.data('l1', 'baz');
+            return 'red';
+          }
           return 'green';
         },
         'border-color': '#fff',
