@@ -14,6 +14,7 @@ import cytoscape = require('cytoscape');
 var jquery = require('jquery');
 var gridGuide = require('cytoscape-grid-guide');
 var edgehandles = require('cytoscape-edgehandles');
+
 gridGuide(cytoscape, jquery);
 cytoscape.use(edgehandles);
 
@@ -25,6 +26,7 @@ export interface Comp {
   l1?: any;
   l2?: any;
   l3?: any;
+  id?: any;
 }
 
 export interface Cord {
@@ -42,31 +44,89 @@ export class EditorComponent implements OnInit {
   public markComponent: string = 'none';
   public cy: cytoscape.Core;
   public eh: any;
-  public gg: any;
-  private removedNodesStorage: string[];
-  private spiceFile: any;
-  private numRes: number = 1;
-  private numCap: number = 1;
-  private numInd: number = 1;
   public value: string;
   public value1: string;
   public remNode: string;
 
   searchTerm: string = 'Bum'; //klx
+  klxname: string = 'Bum'; //klx
 
   private options: any;
   snapping: any = { x: 0, y: 0 };
   color: string = 'red';
   over: boolean = false;
-  //private logging():void;
   compModel: Comp;
-  droppedData: Object = '';
   data: any = { id: 5 };
-  dragContainerRect: ClientRect;
-  dragElementRect: ClientRect;
   public transform: Cord;
   public zoomlevel: number;
   wireId: number = 2;
+
+  public mystyle = [
+    // the stylesheet for the graph
+    {
+      selector: 'node',
+      style: {
+        'font-family': 'helvetica',
+        'font-size': 4,
+        'text-outline-width': 3,
+        'text-outline-color': '#999',
+        'text-valign': 'center',
+        color: '#fff',
+        'border-color': '#fff',
+        label: 'data(name)',
+      },
+    },
+    {
+      selector: 'edge',
+      style: {
+        width: 2,
+        'curve-style': 'bezier',
+      },
+    },
+    {
+      selector: 'node[type= "bendPoint"]',
+      style: {
+        width: '.00001px',
+        height: '.00001px',
+      },
+    },
+    {
+      selector: 'node[type = "node"]',
+      style: {
+        'text-outline-width': 3,
+        'text-outline-color': '#999',
+        'text-valign': 'center',
+        color: (ele) => {
+          if (this.searchTerm == ele.data().name) {
+            console.log('KLXe ' + this.searchTerm + ' ' + ele.data().id);
+            return 'red';
+          }
+          return 'green';
+        },
+        'border-color': '#fff',
+      },
+    },
+    {
+      selector: 'edge[type = "bendPoint" ]',
+      style: {
+        width: 2,
+        'curve-style': 'bezier',
+      },
+    },
+    {
+      selector: '.eh-handle',
+      style: {
+        label: '',
+      },
+    },
+    {
+      selector: '.eh-ghost',
+      style: {
+        label: '',
+      },
+    },
+  ];
+
   @ViewChild('dragContainer') dragContainer: ElementRef<HTMLElement>;
   constructor(private cd: ChangeDetectorRef, private zone: NgZone) {
     this.compModel = {
@@ -100,77 +160,10 @@ export class EditorComponent implements OnInit {
     };
   }
 
-  public showAllStyle: cytoscape.Stylesheet[] = [
-    // the stylesheet for the graph
-    {
-      selector: 'node',
-      style: {
-        'font-family': 'helvetica',
-        'font-size': 4,
-        'text-outline-width': 3,
-        'text-outline-color': '#999',
-        'text-valign': 'center',
-        color: '#fff',
-        'border-color': '#fff',
-
-        label: 'data(id)',
-      },
-    },
-    {
-      selector: 'edge',
-      style: {
-        width: 2,
-        'curve-style': 'bezier',
-      },
-    },
-    {
-      selector: 'node[type= "bendPoint"]',
-      style: {
-        width: '.00001px',
-        height: '.00001px',
-      },
-    },
-    {
-      selector: 'node[type = "node"]',
-      style: {
-        'text-outline-width': 3,
-        'text-outline-color': '#999',
-        'text-valign': 'center',
-        color: (ele) => {
-         // console.log('KLXd ' + this.searchTerm + ' ' + ele.data().id);
-          if (this.searchTerm == ele.data().id) {
-            //ele.data('l1', 'baz');
-            return 'red';
-          }
-          return 'green';
-        },
-        'border-color': '#fff',
-      },
-    },
-    {
-      selector: 'edge[type = "bendPoint" ]',
-      style: {
-        width: 2,
-        'curve-style': 'bezier',
-      },
-    },
-    {
-      selector: '.eh-handle',
-      style: {
-        label: '',
-      },
-    },
-    {
-      selector: '.eh-ghost',
-      style: {
-        label: '',
-      },
-    },
-  ];
+  public showAllStyle: cytoscape.Stylesheet[] = this.mystyle;
 
   ngOnInit() {
     // Initialize cytoscape
-
     this.cy = cytoscape({
       container: document.getElementById('cy'),
       elements: this.graph,
@@ -317,33 +310,9 @@ export class EditorComponent implements OnInit {
     this.eh = this.cy.edgehandles(defaults);
 
     this.eh.disable();
-    //this.cy.edgehandles.disableDrawMode();
-
-    //let layout = this.cy.layout(this.options);
-    //layout.run();
     this.cy.minZoom(0.2);
     this.cy.maxZoom(2);
     this.zoomlevel = this.cy.zoom();
-    //this.cy.edgehandles('drawon()');
-    //console.log(this.zoomlevel);
-
-    //edgehandles defaults
-    //Dragg elements
-
-    //Drag
-    /*dragStart(dragElement: HTMLElement) {
-      this.dragElementRect = dragElement.getBoundingClientRect();
-      this.dragContainerRect = this.dragContainer.nativeElement.getBoundingClientRect();
-    }*/
-    /*this.numOfNodes = calculateNumberOfNodes();
-    //ERror here
-    function calculateNumberOfNodes(){
-      this.cy.nodes().forEach( function (value) {
-        let number =+1; 
-      });
-      console.log(this.number);
-      return this.number;
-    }*/
   }
   dragging({ x, y }) {
     this.transform.x = x - 150;
@@ -366,84 +335,16 @@ export class EditorComponent implements OnInit {
 
   //trying to add/remove a node on click
   addNode(item: string) {
-    /*this.prevNode = this.numOfNodes;
-    this.numOfNodes =+ 1;*/
-    //this.zoomlevel = this.cy.zoom();
-    //console.log(this.zoomlevel);
-
-    if (item === 'Resistor') {
-      this.numRes += 1;
-      this.cy.add([
-        {
-          group: 'nodes',
-          data: { id: 'R' + this.numRes, name: item, value: 1000 },
-          renderedPosition: {
-            x: this.transform.x + this.cy.zoom(),
-            y: this.transform.y + this.cy.zoom(),
-          },
-        },
-      ]);
-    } else if (item === 'Capacitor') {
-      this.numCap += 1;
-      this.cy.add([
-        {
-          group: 'nodes',
-          data: { id: 'C' + this.numCap, name: item, value: 1000 },
-          renderedPosition: { x: this.transform.x, y: this.transform.y },
-        },
-      ]);
-    } else if (item === 'Inductor') {
-      this.numInd += 1;
-      this.cy.add([
-        {
-          group: 'nodes',
-          data: { id: 'C' + this.numInd, name: item, value: 1000 },
-          renderedPosition: { x: this.transform.x, y: this.transform.y },
-        },
-      ]);
-
-      //console.log("elements: %j", this.cy.json(this.cy.json()));
-    }
-    /*else if (item === "conNode"){
-      this.cy.add([{
-        group: 'nodes',
-        data:{id:"con"+this.numOfCon, }
-      }])
-    }*/
     this.cy.nodes().forEach(function (ele) {
       console.log(ele.data());
     });
-
-    //console.log(this.cy.elements().data());
-    //let layout = this.cy.layout(this.options);
-    //layout.run();
-    //console.log(this.graph.nodes);
-    //this.cd.markForCheck();
-    /*this.cy.add([{
-      group: 'nodes',
-      data: { id: this.numOfNodes, name: item, value: 1000 }
-    }, {
-      group: 'edges',
-      data: { id: this.prevNode + ''+ this.numOfNodes , source: this.prevNode, target: this.numOfNodes }
-    }
-    ]);
-    let layout = this.cy.layout({
-      name: 'grid',
-      rows: 1
-    });
-    layout.run();*/
   }
 
   removeNode(remNode: string) {
-    //this.removedNodesStorage.push(this.remNode);
-    if (this.remNode.startsWith('R')) {
-      this.numRes -= 1;
-    } else if (this.remNode.startsWith('C')) {
-      this.numCap -= 1;
-    } else if (this.remNode.startsWith('I')) {
-      this.numInd -= 1;
-    }
     this.cy.remove('#' + this.remNode);
+  }
+  redraw() {
+    this.cy.json({ style: this.mystyle });
   }
   addEdge() {
     this.value;
@@ -462,9 +363,6 @@ export class EditorComponent implements OnInit {
     ]);
 
     let layout = this.cy.layout(this.options);
-    /*let layout = this.cy.layout({
-      name: 'preset'
-    });*/
     layout.run();
   }
   evtListener() {
@@ -479,15 +377,21 @@ export class EditorComponent implements OnInit {
           l1: evtTarget.data('l1'),
           l2: evtTarget.data('l2'),
           l3: evtTarget.data('l3'),
+          id: evtTarget.data('id'),
         };
-        this.v1 = this.compModel.l1;
-        this.v2 = this.compModel.l2;
-        this.v3 = this.compModel.l3;
 
-        console.log(this.compModel.name);
-        console.log(this.compModel.value);
-        console.log(this.compModel.nodeid);
-        console.log(this.cy.json());
+        this.klxname = this.compModel.name;
+
+        this.cy
+          .nodes()
+          .filter("[id='" + this.compModel.id + "']")
+          .first()
+          .data('name', this.klxname + '!');
+
+        console.log('Name ' + this.compModel.name);
+        console.log('Value ' + this.compModel.value);
+        console.log('id ' + this.compModel.id);
+        //        console.log(this.cy.json());
       } else if (evtTarget && evtTarget.isEdge && evtTarget.isEdge()) {
         console.log('this is an edge');
         this.markComponent = '';
@@ -496,29 +400,9 @@ export class EditorComponent implements OnInit {
         this.markComponent = '';
       }
     });
-
-    /*this.cy.on('mousedown', (event) => {
-      var evtTarget = event.target;
-      console.log('here now');
-      this.cy.edgehandles('drawon');
-    });
-
-    this.cy.on('mouseup', (event) =>{
-      var evtTarget = event.target;
-      console.log('quit now');
-      this.cy.edgehandles('drawoff');
-    });*/
   }
   setBackgroundcolor(idToChange: string) {}
 
-  /*checkIfNodeMissing(nodeMiss:string){
-    if(nodeMiss.startsWith('R') && this.removed){
-
-    }
-  }*/
-
-  //comp:Comp;
-  //store local graph
   public graph: any = {
     nodes: [
       {

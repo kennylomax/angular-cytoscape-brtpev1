@@ -29,8 +29,18 @@
     [(ngModel)]="searchTerm"
     [ngModelOptions]="{ standalone: true }"
   /><br />
+
+  klxname:
+  <input
+    id="klxname"
+    type="text"
+    [(ngModel)]="klxname"
+    [ngModelOptions]="{ standalone: true }"
+  /><br />
 </form>
 <button id="addEdge" (click)="addEdge()">add connection</button>
+<button id="redraw" (click)="redraw()">redraw</button>
+
 <div id="container">
   <div class="drag-container" #dragContainer id="dragContainer">
     <div
