@@ -29,7 +29,7 @@ export interface Comp {
   id?: any;
 }
 
-export interface Cord {
+export interface Coord {
   x?: number;
   y?: number;
 }
@@ -41,7 +41,6 @@ export interface Cord {
   //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditorComponent implements OnInit {
-  public markComponent: string = 'none';
   public cy: cytoscape.Core;
   public eh: any;
   public value: string;
@@ -50,15 +49,12 @@ export class EditorComponent implements OnInit {
 
   searchTerm: string = 'Bum'; //klx
   klxname: string = 'Bum'; //klx
+  klxid: string = 'Bum'; //klx
 
   private options: any;
   snapping: any = { x: 0, y: 0 };
-  color: string = 'red';
-  over: boolean = false;
   compModel: Comp;
-  data: any = { id: 5 };
-  public transform: Cord;
-  public zoomlevel: number;
+  public transform: Coord;
   wireId: number = 2;
 
   public mystyle = [
@@ -97,8 +93,8 @@ export class EditorComponent implements OnInit {
         'text-outline-color': '#999',
         'text-valign': 'center',
         color: (ele) => {
-          if (this.searchTerm == ele.data().name) {
-            console.log('KLXe ' + this.searchTerm + ' ' + ele.data().id);
+          if (this.klxname == ele.data().name) {
+            console.log('KLXe ' + this.klxname + ' ' + ele.data().id);
             return 'red';
           }
           return 'green';
@@ -138,6 +134,7 @@ export class EditorComponent implements OnInit {
       x: 0,
       y: 0,
     };
+
     this.options = {
       name: 'preset',
 
@@ -312,32 +309,6 @@ export class EditorComponent implements OnInit {
     this.eh.disable();
     this.cy.minZoom(0.2);
     this.cy.maxZoom(2);
-    this.zoomlevel = this.cy.zoom();
-  }
-  dragging({ x, y }) {
-    this.transform.x = x - 150;
-    this.transform.y = y;
-    //console.log('x:' + x + ' y:' + y);
-  }
-  onDrop({ dropData }: DropEvent<any>): void {
-    this.addNode(dropData);
-  }
-  dragEnter() {
-    this.snapping = { x: 20, y: 20 };
-    this.color = 'pink';
-    this.over = true;
-  }
-  dragLeave() {
-    this.snapping = { x: 0, y: 0 };
-    this.color = 'pink';
-    this.over = false;
-  }
-
-  //trying to add/remove a node on click
-  addNode(item: string) {
-    this.cy.nodes().forEach(function (ele) {
-      console.log(ele.data());
-    });
   }
 
   removeNode(remNode: string) {
@@ -346,30 +317,68 @@ export class EditorComponent implements OnInit {
   redraw() {
     this.cy.json({ style: this.mystyle });
   }
-  addEdge() {
-    this.value;
-    this.value1;
-    console.log(this.value + ' ' + this.value1);
-    //add check if node exists
+
+  rename() {
+    this.cy
+      .nodes()
+      .filter("[id='" + this.compModel.id + "']")
+      .first()
+      .data('name', this.klxname + '!');
+  }
+  generateUniqSerial(): string {
+    return 'xxxx-xxxx-xxx-xxxx'.replace(/[x]/g, (c) => {
+      const r = Math.floor(Math.random() * 16);
+      return r.toString(16);
+    });
+  }
+  addchild() {
+    var newid = this.generateUniqSerial();
     this.cy.add([
+      {
+        group: 'nodes',
+        data: {
+          l1: 'Cloud',
+          l2: '',
+          l3: '',
+          par: '',
+          type: 'node',
+          level: 1,
+          id: newid,
+          value: 1000,
+          name: this.klxname,
+          skillgap: 1,
+          source: '',
+          target: '',
+          tree: null,
+        },
+      },
       {
         group: 'edges',
         data: {
-          id: this.value + this.value1,
-          source: this.value,
-          target: this.value1,
+          l1: '',
+          l2: '',
+          l3: '',
+          par: '',
+          type: 'bendPoint',
+          level: 0,
+          value: null,
+          name: this.klxname,
+          skillgap: null,
+          id: newid + '0',
+          source: this.klxid,
+          target: newid,
+          tree: 3,
         },
       },
     ]);
-
     let layout = this.cy.layout(this.options);
     layout.run();
   }
+
   evtListener() {
     this.cy.one('tap', (event) => {
       var evtTarget = event.target;
       if (evtTarget && evtTarget.isNode && evtTarget.isNode()) {
-        this.markComponent = evtTarget.name;
         this.compModel = {
           name: evtTarget.data('name'),
           value: evtTarget.data('value'),
@@ -379,29 +388,15 @@ export class EditorComponent implements OnInit {
           l3: evtTarget.data('l3'),
           id: evtTarget.data('id'),
         };
-
         this.klxname = this.compModel.name;
-
-        this.cy
-          .nodes()
-          .filter("[id='" + this.compModel.id + "']")
-          .first()
-          .data('name', this.klxname + '!');
-
-        console.log('Name ' + this.compModel.name);
-        console.log('Value ' + this.compModel.value);
-        console.log('id ' + this.compModel.id);
-        //        console.log(this.cy.json());
+        this.klxid = this.compModel.id;
       } else if (evtTarget && evtTarget.isEdge && evtTarget.isEdge()) {
         console.log('this is an edge');
-        this.markComponent = '';
       } else {
         console.log('this is the background');
-        this.markComponent = '';
       }
     });
   }
-  setBackgroundcolor(idToChange: string) {}
 
   public graph: any = {
     nodes: [

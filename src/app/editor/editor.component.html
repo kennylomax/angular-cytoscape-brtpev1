@@ -9,19 +9,6 @@
 </form>
 <button id="removeNode" (click)="removeNode()">removeNode</button>
 <form>
-  node1:<input
-    id="IDnode1"
-    type="text"
-    [(ngModel)]="value"
-    [ngModelOptions]="{ standalone: true }"
-  /><br />
-  value 1node2:<input
-    id="IDnode2"
-    type="text"
-    [(ngModel)]="value1"
-    [ngModelOptions]="{ standalone: true }"
-  /><br />
-
   searchTerm:
   <input
     id="searchTerm"
@@ -40,58 +27,11 @@
 </form>
 <button id="addEdge" (click)="addEdge()">add connection</button>
 <button id="redraw" (click)="redraw()">redraw</button>
+<button id="rename" (click)="rename()">rename</button>
+<button id="addchild" (click)="addchild()">addchild</button>
 
 <div id="container">
-  <div class="drag-container" #dragContainer id="dragContainer">
-    <div
-      #Resistor
-      id="resToDrag"
-      class="drag-item"
-      mwlDraggable
-      dropData="Resistor"
-      dragActiveClass="drag-active"
-      [ghostDragEnabled]="true"
-      [showOriginalElementWhileDragging]="true"
-      [ghostElementTemplate]="draggingS"
-      [dragSnapGrid]="snapping"
-      (dragging)="dragging($event)"
-    ></div>
-    <div
-      #Capacitor
-      id="capToDrag"
-      class="drag-item"
-      mwlDraggable
-      dropData="Capacitor"
-      dragActiveClass="drag-active"
-      [ghostDragEnabled]="true"
-      [showOriginalElementWhileDragging]="true"
-      [ghostElementTemplate]="draggingS"
-      [dragSnapGrid]="snapping"
-      (dragging)="dragging($event)"
-    ></div>
-    <div
-      #Inductor
-      id="indToDrag"
-      class="drag-item"
-      mwlDraggable
-      dropData="Inductor"
-      dragActiveClass="drag-active"
-      [ghostDragEnabled]="true"
-      [showOriginalElementWhileDragging]="true"
-      [ghostElementTemplate]="draggingS"
-      [dragSnapGrid]="snapping"
-      (dragging)="dragging($event)"
-    ></div>
-  </div>
-  <div
-    id="cy"
-    (click)="evtListener()"
-    mwlDroppable
-    (drop)="onDrop($event)"
-    dragOverClass="drop-over-active"
-    (dragOver)="dragEnter($event)"
-    (dragLeave)="dragLeave($event)"
-  ></div>
+  <div id="cy" (click)="evtListener()"></div>
   <div id="rightsidebar">
     <div id="textbox">
       <span class="block"> {{ compModel?.name }} </span>
@@ -99,23 +39,12 @@
       <span class="block"> Identifier tag: {{ compModel?.nodeid }}</span>
     </div>
     <div id="spiceCode">
-      <span>Project title</span>
-      <!--<div *ngFor ="edge of graph.edges" >
-    <div *ngIf="">
-      <span> </span>
-    </div>
-  </div>-->
       <div *ngFor="let node of graph.nodes">
         <span [attr.id]="node.data.id">
           {{ node.data.id }} {{ node.data.line1 }} {{ node.data.line2 }}
           {{ node.data.value }}</span
         >
       </div>
-      <span>.End</span>
     </div>
   </div>
 </div>
-
-<ng-template #draggingS>
-  <div></div>
-</ng-template>
