@@ -12,16 +12,12 @@ import { DropEvent } from 'angular-draggable-droppable';
 import cytoscape = require('cytoscape');
 
 var jquery = require('jquery');
-var edgehandles = require('cytoscape-edgehandles');
-
-cytoscape.use(edgehandles);
 
 //Interfaces
 export interface Comp {
   name?: string;
   value?: number;
   nodeid?: any;
-  //  id?: any;
 }
 
 @Component({
@@ -31,10 +27,6 @@ export interface Comp {
 })
 export class EditorComponent implements OnInit {
   public cy: cytoscape.Core;
-  public eh: any;
-  public value: string;
-  public value1: string;
-  public remNode: string;
 
   selectedName: string = '<None selected>'; //klx
   scratchPad: string = '<None selected>'; //klx
@@ -91,25 +83,6 @@ export class EditorComponent implements OnInit {
         'border-color': '#fff',
       },
     },
-    {
-      selector: 'edge[type = "bendPoint" ]',
-      style: {
-        width: 2,
-        'curve-style': 'bezier',
-      },
-    },
-    {
-      selector: '.eh-handle',
-      style: {
-        label: '',
-      },
-    },
-    {
-      selector: '.eh-ghost',
-      style: {
-        label: '',
-      },
-    },
   ];
 
   public showAllStyle: cytoscape.Stylesheet[] = this.mystyle;
@@ -143,7 +116,6 @@ export class EditorComponent implements OnInit {
       .filter('[name ="' + this.selectedName + '"]')
       .first()
       .data('skillgap');
-    console.log('Weight ' + weight);
     this.cy
       .filter('[name ="' + this.selectedName + '"]')
       .first()
@@ -167,14 +139,17 @@ export class EditorComponent implements OnInit {
       .data('name', this.scratchPad);
     this.selectedName = this.scratchPad;
   }
+
   generateUniqSerial(): string {
     return 'xxxx-xxxx-xxx-xxxx'.replace(/[x]/g, (c) => {
       const r = Math.floor(Math.random() * 16);
       return r.toString(16);
     });
   }
+
   addchild() {
     var newid = this.generateUniqSerial();
+
     this.cy.add([
       {
         group: 'nodes',
@@ -188,17 +163,15 @@ export class EditorComponent implements OnInit {
       {
         group: 'edges',
         data: {
-          type: 'bendPoint',
-          name: this.scratchPad * '_edge',
+          name: this.scratchPad + '_edge',
           skillgap: null,
           id: newid + '0',
-          source: this.klxid,
+          source: this.selectedName,
           target: newid,
         },
       },
     ]);
-    let layout = this.cy.layout(this.options);
-    layout.run();
+    this.redraw();
   }
 
   evtListener() {
@@ -212,6 +185,7 @@ export class EditorComponent implements OnInit {
         this.scratchPad = this.compModel.name;
         this.selectedName = this.compModel.name;
         this.klxid = this.compModel.id;
+        this.redraw();
       } else if (evtTarget && evtTarget.isEdge && evtTarget.isEdge()) {
         console.log('this is an edge');
       } else {
