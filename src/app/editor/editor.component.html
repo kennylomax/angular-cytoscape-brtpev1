@@ -1,28 +1,20 @@
-<!--<button id="addNode" (click)="addNode()" >addNode</button>-->
-
 <form>
-  searchTerm:
+  Selected:
+  <span>{{ selectedName }}</span>
+  Data:
   <input
-    id="searchTerm"
+    id="scratchPad"
+    name="scratchPad"
     type="text"
-    [(ngModel)]="searchTerm"
-    [ngModelOptions]="{ standalone: true }"
-  /><br />
-
-  klxname:
-  <input
-    id="klxname"
-    type="text"
-    [(ngModel)]="klxname"
-    [ngModelOptions]="{ standalone: true }"
+    [(ngModel)]="scratchPad"
   /><br />
 </form>
-<button id="search" (click)="redraw()">search</button>
+<button id="search" (click)="search()">search</button>
 <button id="rename" (click)="rename()">rename</button>
 <button id="addchild" (click)="addchild()">addchild</button>
 <button id="removeNode" (click)="removeNode()">removeNode</button>
-<button id="addweight" (click)="addweight()">addweight</button>
-<button id="reduceweight" (click)="reduceweight()">reduceweight</button>
+<button id="addweight" (click)="adjustweight(1)">addweight</button>
+<button id="reduceweight" (click)="adjustweight(-1)">reduceweight</button>
 
 <div id="container">
   <div id="cy" (click)="evtListener()"></div>
