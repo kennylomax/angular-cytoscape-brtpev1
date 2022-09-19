@@ -1,13 +1,5 @@
 <!--<button id="addNode" (click)="addNode()" >addNode</button>-->
-<form>
-  remove node:<input
-    id="remNode"
-    type="text"
-    [(ngModel)]="remNode"
-    [ngModelOptions]="{ standalone: true }"
-  /><br />
-</form>
-<button id="removeNode" (click)="removeNode()">removeNode</button>
+
 <form>
   searchTerm:
   <input
@@ -25,26 +17,13 @@
     [ngModelOptions]="{ standalone: true }"
   /><br />
 </form>
-<button id="addEdge" (click)="addEdge()">add connection</button>
-<button id="redraw" (click)="redraw()">redraw</button>
+<button id="search" (click)="redraw()">search</button>
 <button id="rename" (click)="rename()">rename</button>
 <button id="addchild" (click)="addchild()">addchild</button>
+<button id="removeNode" (click)="removeNode()">removeNode</button>
+<button id="addweight" (click)="addweight()">addweight</button>
+<button id="reduceweight" (click)="reduceweight()">reduceweight</button>
 
 <div id="container">
   <div id="cy" (click)="evtListener()"></div>
-  <div id="rightsidebar">
-    <div id="textbox">
-      <span class="block"> {{ compModel?.name }} </span>
-      <span class="block"> value: {{ compModel?.value }} </span>
-      <span class="block"> Identifier tag: {{ compModel?.nodeid }}</span>
-    </div>
-    <div id="spiceCode">
-      <div *ngFor="let node of graph.nodes">
-        <span [attr.id]="node.data.id">
-          {{ node.data.id }} {{ node.data.line1 }} {{ node.data.line2 }}
-          {{ node.data.value }}</span
-        >
-      </div>
-    </div>
-  </div>
 </div>

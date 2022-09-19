@@ -29,11 +29,6 @@ export interface Comp {
   id?: any;
 }
 
-export interface Coord {
-  x?: number;
-  y?: number;
-}
-
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
@@ -54,7 +49,6 @@ export class EditorComponent implements OnInit {
   private options: any;
   snapping: any = { x: 0, y: 0 };
   compModel: Comp;
-  public transform: Coord;
   wireId: number = 2;
 
   public mystyle = [
@@ -92,9 +86,12 @@ export class EditorComponent implements OnInit {
         'text-outline-width': 3,
         'text-outline-color': '#999',
         'text-valign': 'center',
+        width: 'mapData(skillgap, 0, 100, 10, 100)',
+        height: 'mapData(skillgap, 0, 100, 10, 100)',
+        'font-size': 'mapData(skillgap, 0, 100, 10, 100)',
         color: (ele) => {
-          if (this.klxname == ele.data().name) {
-            console.log('KLXe ' + this.klxname + ' ' + ele.data().id);
+          if (this.searchTerm == ele.data().name) {
+            console.log('KLXe ' + this.searchTerm + ' ' + ele.data().id);
             return 'red';
           }
           return 'green';
@@ -311,9 +308,33 @@ export class EditorComponent implements OnInit {
     this.cy.maxZoom(2);
   }
 
-  removeNode(remNode: string) {
-    this.cy.remove('#' + this.remNode);
+  removeNode() {
+    if (this.cy.filter("[id='" + this.klxid + "']").degree(false) == 1)
+      this.cy.remove('[id ="' + this.klxid + '"]');
   }
+
+  addweight() {
+    let weight = this.cy
+      .filter('[id ="' + this.klxid + '"]')
+      .first()
+      .data('skillgap');
+    console.log('Weight ' + weight);
+    this.cy
+      .filter('[id ="' + this.klxid + '"]')
+      .first()
+      .data('skillgap', weight + 1);
+  }
+  reduceweight() {
+    let weight = this.cy
+      .filter('[id ="' + this.klxid + '"]')
+      .first()
+      .data('skillgap');
+    this.cy
+      .filter('[id ="' + this.klxid + '"]')
+      .first()
+      .data('skillgap', weight - 1);
+  }
+
   redraw() {
     this.cy.json({ style: this.mystyle });
   }
