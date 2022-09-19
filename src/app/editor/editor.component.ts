@@ -22,7 +22,6 @@ export class EditorComponent implements OnInit {
   scratchPad: string = '<None selected>'; //klx
 
   public mystyle = [
-    // the stylesheet for the graph
     {
       selector: 'node',
       style: {
@@ -40,20 +39,6 @@ export class EditorComponent implements OnInit {
         },
       },
     },
-    {
-      selector: 'edge',
-      style: {
-        width: 2,
-        'curve-style': 'bezier',
-      },
-    },
-    {
-      selector: 'node[type= "bendPoint"]',
-      style: {
-        width: '.00001px',
-        height: '.00001px',
-      },
-    },
   ];
 
   public showAllStyle: cytoscape.Stylesheet[] = this.mystyle;
@@ -66,13 +51,12 @@ export class EditorComponent implements OnInit {
       style: this.showAllStyle,
       layout: {
         name: 'cose',
-        padding: 10,
+        padding: 20,
         avoidOverlap: true,
         nodeDimensionsIncludeLabels: true,
       },
       boxSelectionEnabled: true,
     });
-
     this.cy.minZoom(0.2);
     this.cy.maxZoom(2);
   }
