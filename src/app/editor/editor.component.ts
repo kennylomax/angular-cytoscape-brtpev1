@@ -10,13 +10,6 @@ import {
 
 import cytoscape = require('cytoscape');
 
-//Interfaces
-export interface Comp {
-  name?: string;
-  value?: number;
-  nodeid?: any;
-}
-
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
@@ -27,7 +20,6 @@ export class EditorComponent implements OnInit {
 
   selectedName: string = '<None selected>'; //klx
   scratchPad: string = '<None selected>'; //klx
-  compModel: Comp;
 
   public mystyle = [
     // the stylesheet for the graph
@@ -113,7 +105,7 @@ export class EditorComponent implements OnInit {
   rename() {
     this.cy
       .nodes()
-      .filter("[name='" + this.compModel.name + "']")
+      .filter("[name='" + this.selectedName + "']")
       .first()
       .data('name', this.scratchPad);
     this.selectedName = this.scratchPad;
@@ -157,12 +149,8 @@ export class EditorComponent implements OnInit {
     this.cy.one('tap', (event) => {
       var evtTarget = event.target;
       if (evtTarget && evtTarget.isNode && evtTarget.isNode()) {
-        this.compModel = {
-          name: evtTarget.data('name'),
-          nodeid: evtTarget.data('id'),
-        };
-        this.scratchPad = this.compModel.name;
-        this.selectedName = this.compModel.name;
+        this.scratchPad = evtTarget.data('name');
+        this.selectedName = evtTarget.data('name');
         this.redraw();
       } else if (evtTarget && evtTarget.isEdge && evtTarget.isEdge()) {
         console.log('this is an edge');
