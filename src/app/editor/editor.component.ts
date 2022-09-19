@@ -8,10 +8,7 @@ import {
   NgZone,
 } from '@angular/core';
 
-import { DropEvent } from 'angular-draggable-droppable';
 import cytoscape = require('cytoscape');
-
-var jquery = require('jquery');
 
 //Interfaces
 export interface Comp {
@@ -30,10 +27,6 @@ export class EditorComponent implements OnInit {
 
   selectedName: string = '<None selected>'; //klx
   scratchPad: string = '<None selected>'; //klx
-  klxid: string = 'Bum'; //klx
-
-  private options: any;
-  snapping: any = { x: 0, y: 0 };
   compModel: Comp;
 
   public mystyle = [
@@ -42,13 +35,17 @@ export class EditorComponent implements OnInit {
       selector: 'node',
       style: {
         'font-family': 'helvetica',
-        'font-size': 4,
-        'text-outline-width': 3,
-        'text-outline-color': '#999',
         'text-valign': 'center',
-        color: '#fff',
-        'border-color': '#fff',
         label: 'data(name)',
+        width: 'mapData(skillgap, 0, 100, 10, 100)',
+        height: 'mapData(skillgap, 0, 100, 10, 100)',
+        'font-size': 'mapData(skillgap, 0, 100, 10, 100)',
+        color: (ele) => {
+          if (this.scratchPad == ele.data().name) {
+            return 'red';
+          }
+          return 'green';
+        },
       },
     },
     {
@@ -65,24 +62,6 @@ export class EditorComponent implements OnInit {
         height: '.00001px',
       },
     },
-    {
-      selector: 'node[type = "node"]',
-      style: {
-        'text-outline-width': 3,
-        'text-outline-color': '#999',
-        'text-valign': 'center',
-        width: 'mapData(skillgap, 0, 100, 10, 100)',
-        height: 'mapData(skillgap, 0, 100, 10, 100)',
-        'font-size': 'mapData(skillgap, 0, 100, 10, 100)',
-        color: (ele) => {
-          if (this.scratchPad == ele.data().name) {
-            return 'red';
-          }
-          return 'green';
-        },
-        'border-color': '#fff',
-      },
-    },
   ];
 
   public showAllStyle: cytoscape.Stylesheet[] = this.mystyle;
@@ -92,7 +71,7 @@ export class EditorComponent implements OnInit {
     this.cy = cytoscape({
       container: document.getElementById('cy'),
       elements: this.graph,
-      style: this.showAllStyle, // the stylesheet for the graph,
+      style: this.showAllStyle,
       layout: {
         name: 'cose',
         padding: 10,
@@ -184,7 +163,6 @@ export class EditorComponent implements OnInit {
         };
         this.scratchPad = this.compModel.name;
         this.selectedName = this.compModel.name;
-        this.klxid = this.compModel.id;
         this.redraw();
       } else if (evtTarget && evtTarget.isEdge && evtTarget.isEdge()) {
         console.log('this is an edge');
