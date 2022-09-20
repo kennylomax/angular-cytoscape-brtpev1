@@ -1,21 +1,3 @@
-<form>
-  SelectedId
-  <span>{{ selectedId }}</span
-  >&nbsp;&nbsp; NumSelected<span>{{ numSelected }}</span>
-
-  Search Term:
-  <input
-    id="scratchPad"
-    name="scratchPad"
-    type="text"
-    (input)="search()"
-    [(ngModel)]="scratchPad"
-  />
-  New Data:
-  <input id="newData" name="newData" type="text" [(ngModel)]="newData" />
-
-  <br />
-</form>
 <button
   id="rename"
   (click)="rename()"
@@ -47,6 +29,39 @@
   reduceweight
 </button>
 
-<div id="container">
-  <div id="cy" (click)="evtListener()"></div>
-</div>
+<table>
+  <tr>
+    <td valign="top">
+      <div id="container">
+        <div id="cy" (click)="evtListener()"></div>
+      </div>
+    </td>
+    <td valign="top">
+      <form>
+        SelectedId
+        <span>{{ selectedId }}</span
+        >&nbsp;&nbsp; NumSelected<span>{{ numSelected }}</span>
+
+        Search Term:
+        <input
+          id="scratchPad"
+          name="scratchPad"
+          type="text"
+          (input)="search()"
+          [(ngModel)]="scratchPad"
+        />
+        New Data:
+        <input id="newData" name="newData" type="text" [(ngModel)]="newData" />
+        Description:
+        <input
+          id="desc"
+          name="desc"
+          type="text"
+          [(ngModel)]="desc"
+          (input)="adjustDesc()"
+        />
+        <br />
+      </form>
+    </td>
+  </tr>
+</table>
