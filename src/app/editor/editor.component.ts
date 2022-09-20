@@ -7,6 +7,7 @@ import {
   Injectable,
   NgZone,
 } from '@angular/core';
+import internal = require('assert');
 
 import cytoscape = require('cytoscape');
 
@@ -18,9 +19,11 @@ import cytoscape = require('cytoscape');
 export class EditorComponent implements OnInit {
   public cy: cytoscape.Core;
 
-  selectedName: string = '<None selected>'; //klx
-  selectedId: string = '<None selected>'; //klx
-  scratchPad: string = '<None selected>'; //klx
+  selectedId: string = ''; //klx
+  scratchPad: string = ''; //klx
+  numSelected: number = 0;
+  x: number;
+  y: number;
 
   public mystyle = [
     {
@@ -33,7 +36,13 @@ export class EditorComponent implements OnInit {
         height: 'mapData(gap, 0, 100, 10, 100)',
         'font-size': 'mapData(gap, 0, 100, 10, 100)',
         color: (ele) => {
-          if (this.scratchPad == ele.data().name) {
+          if (
+            this.scratchPad.length > 0 &&
+            ele
+              .data()
+              .name.toLowerCase()
+              .includes(this.scratchPad.toLowerCase())
+          ) {
             return 'red';
           }
           return 'green';
@@ -45,7 +54,6 @@ export class EditorComponent implements OnInit {
   public showAllStyle: cytoscape.Stylesheet[] = this.mystyle;
 
   ngOnInit() {
-    // Initialize cytoscape
     this.cy = cytoscape({
       container: document.getElementById('cy'),
       elements: this.graph,
@@ -65,21 +73,29 @@ export class EditorComponent implements OnInit {
   removeNode() {
     if (this.cy.filter("[name='" + this.scratchPad + "']").degree(false) == 1)
       this.cy.remove('[name ="' + this.scratchPad + '"]');
+    this.selectedId = '';
   }
 
   adjustweight(delta) {
-    let weight = this.cy
-      .filter('[id ="' + this.selectedId + '"]')
-      .first()
-      .data('gap');
+    const sp = this.scratchPad;
     this.cy
-      .filter('[id ="' + this.selectedId + '"]')
-      .first()
-      .data('gap', weight + delta);
+      .nodes()
+      .filter(function (element, i) {
+        return element.data('name').toLowerCase().includes(sp.toLowerCase());
+      })
+      .forEach((element) => {
+        element.data('gap', element.data('gap') + delta);
+      });
+
   }
 
   search() {
-    this.selectedName = this.scratchPad;
+    const sp = this.scratchPad;
+    if (this.scratchPad.length == 0) this.numSelected = 0;
+    else
+      this.numSelected = this.cy.nodes().filter(function (element, i) {
+        return element.data('name').toLowerCase().includes(sp.toLowerCase());
+      }).length;
     this.redraw();
   }
 
@@ -92,10 +108,7 @@ export class EditorComponent implements OnInit {
       .nodes()
       .filter("[id='" + this.selectedId + "']")
       .first();
-    console.log('N1 : ' + n.data('name'));
     n.data('name', this.scratchPad);
-    console.log('N2 : ' + n.data('name'));
-    this.selectedName = this.scratchPad;
   }
 
   generateUniqSerial(): string {
@@ -105,7 +118,13 @@ export class EditorComponent implements OnInit {
     });
   }
 
-  addchild() {
+  addchild(hasparent: boolean) {
+    //    if (this.selectedId.length == 0) return;
+    if (this.cy.filter("[name='" + this.scratchPad + "']").size() > 0) {
+      console.log('Node with name ' + this.scratchPad + 'already exists');
+      return;
+    }
+
     var newid = this.generateUniqSerial();
 
     this.cy.add([
@@ -115,19 +134,25 @@ export class EditorComponent implements OnInit {
           type: 'node',
           name: this.scratchPad,
           id: newid,
-          //          name: this.scratchPad,
-          skillgap: 1,
+          gap: 1,
         },
-      },
-      {
-        group: 'edges',
-        data: {
-          id: newid + '0',
-          source: this.selectedId,
-          target: newid,
-        },
+        position: { x: this.x + 20, y: this.y + 20 },
       },
     ]);
+    if (hasparent)
+      this.cy.add([
+        {
+          group: 'edges',
+          data: {
+            id: newid + '0',
+            source: this.selectedId,
+            target: newid,
+          },
+        },
+      ]);
+    this.x += 20;
+    this.y += 20;
+    this.selectedId = newid;
     this.redraw();
   }
 
@@ -137,35 +162,21 @@ export class EditorComponent implements OnInit {
       if (evtTarget && evtTarget.isNode && evtTarget.isNode()) {
         this.scratchPad = evtTarget.data('name');
         this.selectedId = evtTarget.data('id');
-        this.redraw();
+        this.x = evtTarget.position('x');
+        this.y = evtTarget.position('y');
+        this.search();
+        //        this.redraw();
       } else if (evtTarget && evtTarget.isEdge && evtTarget.isEdge()) {
         console.log('this is an edge');
       } else {
         console.log('this is the background');
+        this.scratchPad = '';
       }
     });
   }
 
   public graph: any = {
     nodes: [
-      {
-        data: {
-          type: 'node',
-          id: '1',
-          name: 'Cloud',
-          gap: 1,
-        },
-        group: 'nodes',
-      },
-      {
-        data: {
-          type: 'node',
-          id: '2',
-          name: 'Data And Machine Learning',
-          gap: 1,
-        },
-        group: 'nodes',
-      },
       {
         data: {
           type: 'node',

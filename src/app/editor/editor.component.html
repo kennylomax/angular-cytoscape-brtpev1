@@ -1,18 +1,28 @@
 <form>
-  Selected:
+  SelectedId
   <span>{{ selectedId }}</span>
+  NumSelected<span>{{ numSelected }}</span>
+
   Data:
   <input
     id="scratchPad"
     name="scratchPad"
     type="text"
+    (input)="search()"
     [(ngModel)]="scratchPad"
-  /><br />
+  />
+  <br />
 </form>
-<button id="search" (click)="search()">search</button>
-<button id="rename" (click)="rename()">rename</button>
-<button id="addchild" (click)="addchild()">addchild</button>
-<button id="removeNode" (click)="removeNode()">removeNode</button>
+<button id="rename" [disabled]="numSelected != 1" (click)="rename()">
+  rename
+</button>
+<button id="addroot" (click)="addchild(false)">addroot</button>
+<button id="addchild" [disabled]="numSelected != 1" (click)="addchild(true)">
+  addchild
+</button>
+<button id="removeNode" [disabled]="numSelected != 1" (click)="removeNode()">
+  removeNode
+</button>
 <button id="addweight" (click)="adjustweight(1)">addweight</button>
 <button id="reduceweight" (click)="adjustweight(-1)">reduceweight</button>
 
