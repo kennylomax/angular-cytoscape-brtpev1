@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 
 import cytoscape = require('cytoscape');
-//import saveAs = require('file-saver');
 import { saveAs } from 'file-saver';
 
 export interface Skills {
