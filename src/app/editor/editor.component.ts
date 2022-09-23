@@ -10,8 +10,14 @@ import {
   NgZone,
 } from '@angular/core';
 
-import { MatTableModule } from '@angular/material/table';
 import cytoscape = require('cytoscape');
+
+export interface Skills {
+  name: string;
+  id: string;
+  gap: number;
+}
+const ELEMENT_DATA: Skills[] = [{ name: 'aaa', id: 'Hydrogen', gap: 1.0079 }];
 
 @Component({
   selector: 'app-editor',
@@ -20,17 +26,19 @@ import cytoscape = require('cytoscape');
 })
 export class EditorComponent implements OnInit {
   cy: cytoscape.Core;
-
   selectedId: string = ''; //klx
   scratchPad: string = ''; //klx
   newData: string = '';
   desc: string = '';
-  listing: string;
+  // listing: string;
   numSelected: number = 0;
   overview: any; //     this.overview = JSON.parse(this.cy.elements());
 
   x: number;
   y: number;
+
+  dataSource = ELEMENT_DATA; //Array(); //ELEMENT_DATA;
+  displayedColumns: string[] = ['name', 'id', 'gap'];
 
   mystyle = [
     {
@@ -98,7 +106,7 @@ export class EditorComponent implements OnInit {
   }
 
   print() {
-    this.listing = '';
+    this.dataSource = new Array();
     this.cy
       .elements('node')
       .sort(function (a, b) {
@@ -106,7 +114,11 @@ export class EditorComponent implements OnInit {
       })
       .slice(0, 20)
       .forEach((elem) => {
-        this.listing += elem.data('name') + ' ' + elem.data('gap');
+        this.dataSource.push({
+          name: elem.data('name'),
+          id: elem.data('id'),
+          gap: elem.data('gap'),
+        });
         console.log(elem.data('name') + ' ' + elem.data('gap'));
       });
   }

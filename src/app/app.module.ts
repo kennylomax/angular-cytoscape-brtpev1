@@ -11,8 +11,10 @@ import { AppComponent } from './app.component';
 //Other components
 import { EditorComponent } from './editor/editor.component';
 
+import { MatTableModule } from '@angular/material/table';
+
 @NgModule({
-  imports: [BrowserModule, FormsModule, DragAndDropModule],
+  imports: [BrowserModule, FormsModule, DragAndDropModule, MatTableModule],
   declarations: [AppComponent, EditorComponent],
   providers: [],
   bootstrap: [AppComponent],
