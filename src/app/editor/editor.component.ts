@@ -147,6 +147,7 @@ export class EditorComponent implements OnInit {
       .forEach((element) => {
         element.data('gap', element.data('gap') + delta);
       });
+    this.print();
   }
 
   search() {

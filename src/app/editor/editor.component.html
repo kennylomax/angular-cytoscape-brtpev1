@@ -1,70 +1,53 @@
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  <!--- Note that these columns can be defined in any order.
-      The actual rendered columns are set as a property on the row definition" -->
-
-  <!-- Position Column -->
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef>name</th>
-    <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-  </ng-container>
-
-  <!-- Name Column -->
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef>id</th>
-    <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-  </ng-container>
-
-  <!-- Weight Column -->
-  <ng-container matColumnDef="gap">
-    <th mat-header-cell *matHeaderCellDef>gap</th>
-    <td mat-cell *matCellDef="let element">{{ element.gap }}</td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
-
-<button
-  id="rename"
-  (click)="rename()"
-  [disabled]="newData.length == 0 || numSelected != 1"
->
-  rename
-</button>
-<button id="addroot" [disabled]="newData.length == 0" (click)="addchild(false)">
-  addroot
-</button>
-<button
-  id="addchild"
-  [disabled]="newData.length == 0 || numSelected != 1"
-  (click)="addchild(true)"
->
-  addchild
-</button>
-<button id="removeNode" [disabled]="numSelected != 1" (click)="removeNode()">
-  removeNode
-</button>
-<button id="addweight" [disabled]="numSelected == 0" (click)="adjustweight(1)">
-  addweight
-</button>
-<button
-  id="reduceweight"
-  [disabled]="numSelected == 0"
-  (click)="adjustweight(-1)"
->
-  reduceweight
-</button>
-<button id="print" (click)="print()">print</button>
 <table>
   <tr>
     <td valign="top">
+      <button
+        id="rename"
+        (click)="rename()"
+        [disabled]="newData.length == 0 || numSelected != 1"
+      >
+        rename
+      </button>
+      <button
+        id="addroot"
+        [disabled]="newData.length == 0"
+        (click)="addchild(false)"
+      >
+        addroot
+      </button>
+      <button
+        id="addchild"
+        [disabled]="newData.length == 0 || numSelected != 1"
+        (click)="addchild(true)"
+      >
+        addchild
+      </button>
+      <button
+        id="removeNode"
+        [disabled]="numSelected != 1"
+        (click)="removeNode()"
+      >
+        removeNode
+      </button>
+      <button
+        id="addweight"
+        [disabled]="numSelected == 0"
+        (click)="adjustweight(1)"
+      >
+        addweight
+      </button>
+      <button
+        id="reduceweight"
+        [disabled]="numSelected == 0"
+        (click)="adjustweight(-1)"
+      >
+        reduceweight
+      </button>
+      <button id="print" (click)="print()">print</button>
       <div id="container">
         <div id="cy" (click)="evtListener()"></div>
       </div>
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
+
       <form>
         SelectedId
         <span>{{ selectedId }}</span
@@ -91,6 +74,27 @@
         <br />
       </form>
       Listing: <span>{{ listing }}</span>
+    </td>
+    <td valign="top">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>name</th>
+          <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>id</th>
+          <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="gap">
+          <th mat-header-cell *matHeaderCellDef>gap</th>
+          <td mat-cell *matCellDef="let element">{{ element.gap }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
     </td>
   </tr>
 </table>
