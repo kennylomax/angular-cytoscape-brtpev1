@@ -11,6 +11,8 @@ import {
 } from '@angular/core';
 
 import cytoscape = require('cytoscape');
+//import saveAs = require('file-saver');
+import { saveAs } from 'file-saver';
 
 export interface Skills {
   name: string;
@@ -46,8 +48,8 @@ export class EditorComponent implements OnInit {
       style: {
         'text-valign': 'top',
         label: 'data(name)',
-        width: '40',
-        height: '40',
+        width: '20',
+        height: '20',
         'font-size': 'mapData(gap, 0, 10, 10, 20)',
 
         'background-color': (ele) => {
@@ -103,9 +105,10 @@ export class EditorComponent implements OnInit {
     });
     this.cy.minZoom(0.2);
     this.cy.maxZoom(2);
+    this.updateTable();
   }
 
-  print() {
+  updateTable() {
     this.dataSource = new Array();
     this.cy
       .elements('node')
@@ -139,15 +142,10 @@ export class EditorComponent implements OnInit {
 
   adjustweight(delta) {
     const sp = this.scratchPad;
-    this.cy
-      .$('node:selected')
-      //      .filter(function (element, i) {
-      //        return element.data('name').toLowerCase().includes(sp.toLowerCase());
-      //      })
-      .forEach((element) => {
-        element.data('gap', element.data('gap') + delta);
-      });
-    this.print();
+    this.cy.$('node:selected').forEach((element) => {
+      element.data('gap', element.data('gap') + delta);
+    });
+    this.updateTable();
   }
 
   adjustFromId(id, delta) {
@@ -177,6 +175,7 @@ export class EditorComponent implements OnInit {
       .filter("[id='" + this.selectedId + "']")
       .first();
     n.data('name', this.newData);
+    this.updateTable();
   }
 
   generateUniqSerial(): string {
@@ -184,6 +183,26 @@ export class EditorComponent implements OnInit {
       const r = Math.floor(Math.random() * 16);
       return r.toString(16);
     });
+  }
+
+  save() {
+    const blob = new Blob([JSON.stringify(this.cy.json())], {
+      type: 'text/plain;charset=utf-8',
+    });
+    saveAs(blob, 'save-me.txt');
+  }
+  fileContent: string = '';
+
+  loadFile(fileList: FileList): void {
+    let file = fileList[0];
+    let fileReader: FileReader = new FileReader();
+    let self = this;
+    fileReader.onloadend = function (x) {
+      self.cy.elements().remove();
+      self.cy.json(JSON.parse('' + fileReader.result));
+      self.redraw();
+    };
+    fileReader.readAsText(file);
   }
 
   addchild(hasparent: boolean) {
@@ -1497,7 +1516,7 @@ export class EditorComponent implements OnInit {
         data: {
           type: 'node',
           id: '133',
-          name: 'μsoft Desired State Configuration (DSC)',
+          name: 'Microsoft Desired State Configuration (DSC)',
           gap: 1,
           desc: '',
         },
@@ -1507,7 +1526,7 @@ export class EditorComponent implements OnInit {
         data: {
           type: 'node',
           id: '134',
-          name: 'μsoft Excel',
+          name: 'Microsoft Excel',
           gap: 1,
           desc: '',
         },
@@ -1517,7 +1536,7 @@ export class EditorComponent implements OnInit {
         data: {
           type: 'node',
           id: '135',
-          name: 'μsoft Hyper-V',
+          name: 'Microsoft Hyper-V',
           gap: 1,
           desc: '',
         },
@@ -1527,7 +1546,7 @@ export class EditorComponent implements OnInit {
         data: {
           type: 'node',
           id: '136',
-          name: 'μsoft Intune',
+          name: 'Microsoft Intune',
           gap: 1,
           desc: '',
         },
@@ -1537,7 +1556,7 @@ export class EditorComponent implements OnInit {
         data: {
           type: 'node',
           id: '137',
-          name: 'μsoft Orca',
+          name: 'Microsoft Orca',
           gap: 1,
           desc: '',
         },
@@ -1547,7 +1566,7 @@ export class EditorComponent implements OnInit {
         data: {
           type: 'node',
           id: '138',
-          name: 'μsoft Power Automate',
+          name: 'Microsoft Power Automate',
           gap: 1,
           desc: '',
         },
@@ -1557,7 +1576,7 @@ export class EditorComponent implements OnInit {
         data: {
           type: 'node',
           id: '139',
-          name: 'μsoft Power BI',
+          name: 'Microsoft Power BI',
           gap: 1,
           desc: '',
         },
@@ -1567,7 +1586,7 @@ export class EditorComponent implements OnInit {
         data: {
           type: 'node',
           id: '140',
-          name: 'μsoft SQL Server',
+          name: 'Microsoft SQL Server',
           gap: 1,
           desc: '',
         },
@@ -1577,7 +1596,7 @@ export class EditorComponent implements OnInit {
         data: {
           type: 'node',
           id: '142',
-          name: 'μsoft StreamInsight',
+          name: 'Microsoft StreamInsight',
           gap: 1,
           desc: '',
         },

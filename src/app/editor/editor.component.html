@@ -1,3 +1,28 @@
+<form class="bod">
+  SelectedId
+  <span>{{ selectedId }}</span
+  >&nbsp;&nbsp; NumSelected &nbsp;<span>{{ numSelected }}</span>
+
+  Search Term:
+  <input
+    id="scratchPad"
+    name="scratchPad"
+    type="text"
+    (input)="search()"
+    [(ngModel)]="scratchPad"
+  />
+  New Data:
+  <input id="newData" name="newData" type="text" [(ngModel)]="newData" />
+  Description:
+  <input
+    id="desc"
+    name="desc"
+    type="text"
+    [(ngModel)]="desc"
+    (input)="adjustDesc()"
+  />
+  <br />
+</form>
 <table>
   <tr>
     <td valign="top">
@@ -43,57 +68,34 @@
       >
         reduceweight
       </button>
-      <button id="print" (click)="print()">print</button>
+      <button id="save" (click)="save()">save</button>
+      <input type="file" (change)="loadFile($event.target.files)" />
+
       <div id="container">
         <div id="cy" (click)="evtListener()"></div>
       </div>
 
-      <form>
-        SelectedId
-        <span>{{ selectedId }}</span
-        >&nbsp;&nbsp; NumSelected<span>{{ numSelected }}</span>
-
-        Search Term:
-        <input
-          id="scratchPad"
-          name="scratchPad"
-          type="text"
-          (input)="search()"
-          [(ngModel)]="scratchPad"
-        />
-        New Data:
-        <input id="newData" name="newData" type="text" [(ngModel)]="newData" />
-        Description:
-        <input
-          id="desc"
-          name="desc"
-          type="text"
-          [(ngModel)]="desc"
-          (input)="adjustDesc()"
-        />
-        <br />
-      </form>
       Listing: <span>{{ listing }}</span>
     </td>
     <td valign="top">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Topic</th>
-          <td mat-cell *matCellDef="let element">
-            <span (click)="adjustFromId(element.id, 1)"> + </span>
-            <span (click)="adjustFromId(element.id, -1)"> - </span>
-            {{ element.name }}&nbsp;
-          </td>
+          <td mat-cell *matCellDef="let element">{{ element.name }}&nbsp;</td>
         </ng-container>
 
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef>id</th>
-          <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+          <td mat-cell *matCellDef="let element">{{ element.id }} &nbsp;</td>
         </ng-container>
 
         <ng-container matColumnDef="gap">
           <th mat-header-cell *matHeaderCellDef>Gap</th>
-          <td mat-cell *matCellDef="let element">{{ element.gap }}</td>
+          <td mat-cell *matCellDef="let element">
+            {{ element.gap }}&nbsp;
+            <span (click)="adjustFromId(element.id, 1)"> + &nbsp;</span>
+            <span (click)="adjustFromId(element.id, -1)"> - &nbsp;</span>
+          </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
