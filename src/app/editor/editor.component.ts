@@ -150,6 +150,11 @@ export class EditorComponent implements OnInit {
     this.print();
   }
 
+  adjustFromId(id, delta) {
+    this.cy.filter('true').unselect();
+    this.cy.filter("[id='" + id + "']").select();
+    this.adjustweight(delta);
+  }
   search() {
     const sp = this.scratchPad;
     this.numSelected = this.cy.nodes().filter(function (element, i) {
