@@ -10,7 +10,7 @@ import {
   NgZone,
 } from '@angular/core';
 
-import internal = require('assert');
+import { MatTableModule } from '@angular/material/table';
 import cytoscape = require('cytoscape');
 
 @Component({
@@ -25,33 +25,29 @@ export class EditorComponent implements OnInit {
   scratchPad: string = ''; //klx
   newData: string = '';
   desc: string = '';
+  listing: string;
   numSelected: number = 0;
+  overview: any; //     this.overview = JSON.parse(this.cy.elements());
 
   x: number;
   y: number;
 
-  public mystyle = [
+  mystyle = [
     {
       selector: 'node',
       style: {
-        'font-family': 'helvetica',
         'text-valign': 'top',
         label: 'data(name)',
-        width: '5',
-        height: '5',
-        'font-size': 'mapData(gap, 0, 10, 28, 50)',
+        width: '40',
+        height: '40',
+        'font-size': 'mapData(gap, 0, 10, 10, 20)',
+
+        'background-color': (ele) => {
+          return this.colorIt(ele);
+        },
+
         color: (ele) => {
-          if (
-            this.scratchPad.length > 0 &&
-            ele
-              .data()
-              .name.toLowerCase()
-              .includes(this.scratchPad.toLowerCase())
-          )
-            return 'red';
-          else if (ele.selected()) return 'blue';
-          else if (ele.degree(false) == 1) return 'black';
-          return 'green';
+          return this.colorIt(ele);
         },
       },
     },
@@ -64,17 +60,34 @@ export class EditorComponent implements OnInit {
     },
   ];
 
-  public showAllStyle: cytoscape.Stylesheet[] = this.mystyle;
+  unselect() {
+    this.scratchPad = '';
+    this.selectedId = '';
+    this.desc = '';
+    this.search();
+  }
+
+  colorIt(ele) {
+    if (
+      this.scratchPad.length > 0 &&
+      ele.data().name.toLowerCase().includes(this.scratchPad.toLowerCase())
+    )
+      return 'red';
+    else if (ele.selected()) return 'blue';
+    else if (ele.data('level') == 0) return 'blue';
+    else if (ele.data('level') == 1) return 'purple';
+    return 'green';
+  }
 
   ngOnInit() {
     this.cy = cytoscape({
       container: document.getElementById('cy'),
       elements: this.graph,
-      style: this.showAllStyle,
+      style: this.mystyle,
       layout: {
         name: 'cose',
         fit: true,
-        spacingFactor: 100,
+        spacingFactor: 1,
         avoidOverlap: true,
         nodeDimensionsIncludeLabels: true,
       },
@@ -82,6 +95,20 @@ export class EditorComponent implements OnInit {
     });
     this.cy.minZoom(0.2);
     this.cy.maxZoom(2);
+  }
+
+  print() {
+    this.listing = '';
+    this.cy
+      .elements('node')
+      .sort(function (a, b) {
+        return b.data('gap') - a.data('gap');
+      })
+      .slice(0, 20)
+      .forEach((elem) => {
+        this.listing += elem.data('name') + ' ' + elem.data('gap');
+        console.log(elem.data('name') + ' ' + elem.data('gap'));
+      });
   }
 
   adjustDesc() {
@@ -95,27 +122,22 @@ export class EditorComponent implements OnInit {
       this.cy.filter("[name='" + this.scratchPad + "']").degree(false) == 1
     )
       this.cy.remove('[name ="' + this.scratchPad + '"]');
-    this.scratchPad = '';
-    this.selectedId = '';
-    this.search();
+    this.unselect();
   }
 
   adjustweight(delta) {
     const sp = this.scratchPad;
     this.cy
-      .nodes()
-      .filter(function (element, i) {
-        return element.data('name').toLowerCase().includes(sp.toLowerCase());
-      })
+      .$('node:selected')
+      //      .filter(function (element, i) {
+      //        return element.data('name').toLowerCase().includes(sp.toLowerCase());
+      //      })
       .forEach((element) => {
         element.data('gap', element.data('gap') + delta);
       });
   }
 
   search() {
-    this.selectedId = '';
-    this.numSelected = 0;
-    this.desc = '';
     const sp = this.scratchPad;
     this.numSelected = this.cy.nodes().filter(function (element, i) {
       return (
@@ -148,14 +170,18 @@ export class EditorComponent implements OnInit {
 
   addchild(hasparent: boolean) {
     if (hasparent && this.numSelected != 1) return;
-
+    if (!this.x) {
+      this.x = 100;
+      this.y = 100;
+    }
     if (this.cy.filter("[name='" + this.newData + "']").size() > 0) {
       console.log('Node with name ' + this.newData + 'already exists');
       return;
     }
 
     var newid = this.generateUniqSerial();
-
+    var newLevel = 2;
+    if (!hasparent) newLevel = 0;
     this.cy.add([
       {
         group: 'nodes',
@@ -165,6 +191,7 @@ export class EditorComponent implements OnInit {
           id: newid,
           gap: 1,
           desc: '',
+          level: newLevel,
         },
         position: { x: this.x + 20, y: this.y + 20 },
       },
@@ -188,6 +215,7 @@ export class EditorComponent implements OnInit {
 
   evtListener() {
     this.cy.one('tap', (event) => {
+      this.unselect();
       var evtTarget = event.target;
       if (evtTarget && evtTarget.isNode && evtTarget.isNode()) {
         this.scratchPad = evtTarget.data('name');
@@ -198,11 +226,6 @@ export class EditorComponent implements OnInit {
         this.numSelected = 1;
       } else if (evtTarget && evtTarget.isEdge && evtTarget.isEdge()) {
         console.log('this is an edge');
-      } else {
-        this.scratchPad = '';
-        this.numSelected = 0;
-        this.selectedId = '';
-        this.desc = '';
       }
     });
   }
@@ -216,6 +239,7 @@ export class EditorComponent implements OnInit {
           name: 'IT Ops',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -226,6 +250,7 @@ export class EditorComponent implements OnInit {
           name: 'Security ',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -236,6 +261,7 @@ export class EditorComponent implements OnInit {
           name: 'Software Dev',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -246,6 +272,7 @@ export class EditorComponent implements OnInit {
           name: 'Big Data',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -256,6 +283,7 @@ export class EditorComponent implements OnInit {
           name: 'Business Intelligence',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -263,9 +291,10 @@ export class EditorComponent implements OnInit {
         data: {
           type: 'node',
           id: '8',
-          name: 'Certifications',
+          name: 'Security Certifications',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
@@ -276,6 +305,7 @@ export class EditorComponent implements OnInit {
           name: 'Cloud Arch. And Design',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -286,6 +316,7 @@ export class EditorComponent implements OnInit {
           name: 'Cloud Platforms',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -296,6 +327,7 @@ export class EditorComponent implements OnInit {
           name: 'Configuration Management',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
@@ -306,6 +338,7 @@ export class EditorComponent implements OnInit {
           name: 'Containers',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -316,6 +349,7 @@ export class EditorComponent implements OnInit {
           name: 'Data Visualization',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -326,6 +360,7 @@ export class EditorComponent implements OnInit {
           name: 'Databases',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -336,6 +371,7 @@ export class EditorComponent implements OnInit {
           name: 'DevOps',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
@@ -346,6 +382,7 @@ export class EditorComponent implements OnInit {
           name: 'IT Automation',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
@@ -356,6 +393,7 @@ export class EditorComponent implements OnInit {
           name: 'Languages and Libs',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -366,6 +404,7 @@ export class EditorComponent implements OnInit {
           name: 'Machine Learning',
           gap: 1,
           desc: '',
+          level: 0,
         },
         group: 'nodes',
       },
@@ -376,6 +415,7 @@ export class EditorComponent implements OnInit {
           name: 'Mob Dev',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
@@ -386,6 +426,7 @@ export class EditorComponent implements OnInit {
           name: 'Programming Languages',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
@@ -396,6 +437,7 @@ export class EditorComponent implements OnInit {
           name: 'Security Arch. And Engineering',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
@@ -406,6 +448,7 @@ export class EditorComponent implements OnInit {
           name: 'Security Awareness',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
@@ -416,6 +459,7 @@ export class EditorComponent implements OnInit {
           name: 'Security Operations',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
@@ -456,6 +500,7 @@ export class EditorComponent implements OnInit {
           name: 'Virtualization',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
@@ -466,6 +511,7 @@ export class EditorComponent implements OnInit {
           name: 'Web Dev',
           gap: 1,
           desc: '',
+          level: 1,
         },
         group: 'nodes',
       },
