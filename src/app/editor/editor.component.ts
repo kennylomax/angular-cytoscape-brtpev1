@@ -134,7 +134,7 @@ export class EditorComponent implements OnInit {
   removeNode() {
     if (
       this.numSelected == 1 &&
-      this.cy.filter("[name='" + this.scratchPad + "']").degree(false) == 1
+      this.cy.filter("[name='" + this.scratchPad + "']").degree(false) <= 1
     )
       this.cy.remove('[name ="' + this.scratchPad + '"]');
     this.unselect();
@@ -201,6 +201,7 @@ export class EditorComponent implements OnInit {
       self.cy.elements().remove();
       self.cy.json(JSON.parse('' + fileReader.result));
       self.redraw();
+      self.updateTable();
     };
     fileReader.readAsText(file);
   }
