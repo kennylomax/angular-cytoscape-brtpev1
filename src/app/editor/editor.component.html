@@ -78,7 +78,7 @@
     <td valign="top">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>name</th>
+          <th mat-header-cell *matHeaderCellDef>Topic</th>
           <td mat-cell *matCellDef="let element">
             <span (click)="adjustFromId(element.id, 1)"> + </span>
             <span (click)="adjustFromId(element.id, -1)"> - </span>
@@ -92,7 +92,7 @@
         </ng-container>
 
         <ng-container matColumnDef="gap">
-          <th mat-header-cell *matHeaderCellDef>gap</th>
+          <th mat-header-cell *matHeaderCellDef>Gap</th>
           <td mat-cell *matCellDef="let element">{{ element.gap }}</td>
         </ng-container>
 
@@ -102,3 +102,5 @@
     </td>
   </tr>
 </table>
+CY Json
+{{ cy.elements('node').data('name') }}
