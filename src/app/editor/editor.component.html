@@ -1,35 +1,13 @@
-<form class="bod">
-  Search:
-  <input
-    id="scratchPad"
-    name="scratchPad"
-    type="text"
-    (input)="search()"
-    [(ngModel)]="scratchPad"
-  />
-  Description:
-  <input
-    id="desc"
-    name="desc"
-    type="text"
-    [(ngModel)]="desc"
-    (input)="adjustDesc()"
-  />
-  <br />
-</form>
 <table>
   <tr>
     <td valign="top">
-      <button type="button" mat-raised-button (click)="fileInput.click()">
-        Choose File
-      </button>
-
+      Search:
       <input
-        style="display:none"
-        (change)="onFileSelected()"
-        #fileInput
-        type="file"
-        id="file"
+        id="scratchPad"
+        name="scratchPad"
+        type="text"
+        (input)="search()"
+        [(ngModel)]="scratchPad"
       />
 
       <button
@@ -56,7 +34,7 @@
         [disabled]="numSelected != 1"
         (click)="removeNode()"
       >
-        removeNode
+        Remove
       </button>
       <button
         mat-raised-button
@@ -64,7 +42,7 @@
         [disabled]="numSelected == 0"
         (click)="adjustweight(1)"
       >
-        addweight
+        Add Weight
       </button>
       <button
         mat-raised-button
@@ -72,16 +50,25 @@
         [disabled]="numSelected == 0"
         (click)="adjustweight(-1)"
       >
-        reduceweight
+        Reduce Weight
+      </button>
+      <button type="button" mat-raised-button (click)="fileInput.click()">
+        Choose File
       </button>
 
-      <button mat-raised-button id="save" (click)="save()">save</button>
+      <input
+        style="display:none"
+        (change)="onFileSelected()"
+        #fileInput
+        type="file"
+        id="file"
+      />
+
+      <button mat-raised-button id="save" (click)="save()">Save</button>
 
       <div id="container">
         <div id="cy" (click)="evtListener()"></div>
       </div>
-
-      Listing: <span>{{ listing }}</span>
     </td>
 
     <td valign="top">
@@ -89,11 +76,6 @@
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Topic</th>
           <td mat-cell *matCellDef="let element">{{ element.name }}&nbsp;</td>
-        </ng-container>
-
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef>id</th>
-          <td mat-cell *matCellDef="let element">{{ element.id }} &nbsp;</td>
         </ng-container>
 
         <ng-container matColumnDef="gap">

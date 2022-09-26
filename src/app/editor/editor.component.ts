@@ -35,19 +35,17 @@ export class EditorComponent implements OnInit {
   updateFromChoice(data) {
     console.log('In update' + data);
     const j = JSON.parse(data);
-    if (j.operation == 'rename' && j.choice && j.choice.length > 0)
-      this.rename(j.choice);
-    else if (j.operation == 'addroot' && j.choice && j.choice.length > 0)
-      this.addchild(false, j.choice);
-    else if (j.operation == 'addchild' && j.choice && j.choice.length > 0)
-      this.addchild(true, j.choice);
+    if (!j.choice || j.choice.trim().length == 0) return;
+    var choice = j.choice.trim();
+    if (j.operation == 'rename') this.rename(choice);
+    else if (j.operation == 'addroot') this.addchild(false, choice);
+    else if (j.operation == 'addchild') this.addchild(true, choice);
   }
 
   cy: cytoscape.Core;
   selectedId: string = ''; //klx
   scratchPad: string = ''; //klx
   desc: string = '';
-  // listing: string;
   numSelected: number = 0;
   overview: any; //     this.overview = JSON.parse(this.cy.elements());
 
@@ -55,7 +53,7 @@ export class EditorComponent implements OnInit {
   y: number;
 
   dataSource = [{ name: 'not', id: 'set', gap: 1.0079 }];
-  displayedColumns: string[] = ['name', 'id', 'gap'];
+  displayedColumns: string[] = ['name', 'gap'];
 
   mystyle = [
     {
@@ -99,9 +97,9 @@ export class EditorComponent implements OnInit {
     )
       return 'red';
     else if (ele.selected()) return 'blue';
-    else if (ele.data('level') == 0) return 'blue';
-    else if (ele.data('level') == 1) return 'purple';
-    return 'green';
+    else if (ele.data('level') == 0) return '#82E0AA';
+    else if (ele.data('level') == 1) return '#28B463';
+    return '#186A3B';
   }
 
   ngOnInit() {
@@ -139,11 +137,6 @@ export class EditorComponent implements OnInit {
         });
         console.log(elem.data('name') + ' ' + elem.data('gap'));
       });
-  }
-
-  adjustDesc() {
-    if (this.numSelected == 1)
-      this.cy.filter("[id='" + this.selectedId + "']").data('desc', this.desc);
   }
 
   removeNode() {
@@ -222,6 +215,10 @@ export class EditorComponent implements OnInit {
       self.updateTable();
     };
     fileReader.readAsText(file);
+  }
+
+  dialogChanging() {
+    console.log('Dialog changing');
   }
 
   addchild(hasparent: boolean, choice: string) {

@@ -15,4 +15,8 @@ export class ExampleDialogComponent {
   onCancel(): void {
     this.dialogRef.close();
   }
+
+  dialogChanging() {
+    console.log('Dialog changing1');
+  }
 }
