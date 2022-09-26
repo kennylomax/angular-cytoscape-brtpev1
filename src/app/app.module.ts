@@ -10,11 +10,28 @@ import { AppComponent } from './app.component';
 
 //Other components
 import { EditorComponent } from './editor/editor.component';
+import {
+  MatButtonModule,
+  MatCommonModule,
+  MatFormFieldModule,
+  MatInputModule,
+} from '@angular/material';
 
 import { MatTableModule } from '@angular/material/table';
+import { ExampleDialogModule } from './example-dialog/example-dialog.module';
 
 @NgModule({
-  imports: [BrowserModule, FormsModule, DragAndDropModule, MatTableModule],
+  imports: [
+    ExampleDialogModule,
+    BrowserModule,
+    FormsModule,
+    DragAndDropModule,
+    MatTableModule,
+    MatButtonModule,
+    MatCommonModule,
+    MatFormFieldModule,
+    MatInputModule,
+  ],
   declarations: [AppComponent, EditorComponent],
   providers: [],
   bootstrap: [AppComponent],
