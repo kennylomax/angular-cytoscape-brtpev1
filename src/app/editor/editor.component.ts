@@ -9,10 +9,6 @@ export interface Skills {
   id: string;
   gap: number;
 }
-export interface DialogData {
-  animal: string;
-  name: string;
-}
 
 @Component({
   selector: 'app-editor',
@@ -63,12 +59,11 @@ export class EditorComponent implements OnInit {
         label: 'data(name)',
         width: '20',
         height: '20',
-        'font-size': 'mapData(gap, 0, 10, 10, 20)',
+        'font-size': 'mapData(gap, 0, 10, 0, 60)',
 
         'background-color': (ele) => {
           return this.colorIt(ele);
         },
-
         color: (ele) => {
           return this.colorIt(ele);
         },
@@ -229,6 +224,9 @@ export class EditorComponent implements OnInit {
     }
     if (this.cy.filter("[name='" + choice + "']").size() > 0) {
       console.log('Node with name ' + choice + 'already exists');
+      this.scratchPad = choice;
+      this.search();
+      this.cy.fit();
       return;
     }
 
