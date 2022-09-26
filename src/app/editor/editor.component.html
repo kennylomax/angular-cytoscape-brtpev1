@@ -7,8 +7,6 @@
     (input)="search()"
     [(ngModel)]="scratchPad"
   />
-  New Data:
-  <input id="newData" name="newData" type="text" [(ngModel)]="newData" />
   Description:
   <input
     id="desc"
@@ -22,28 +20,33 @@
 <table>
   <tr>
     <td valign="top">
-      <button mat-button (click)="openDialog()">Open dialog</button>
+      Use:
+      <input id="newData" name="newData" type="text" [(ngModel)]="newData" /> to
+      ..
       <button
         id="rename"
         (click)="rename()"
         [disabled]="newData.length == 0 || numSelected != 1"
       >
-        rename
-      </button>
+        Rename node</button
+      >&nbsp;
       <button
         id="addroot"
         [disabled]="newData.length == 0"
         (click)="addchild(false)"
       >
-        addroot
-      </button>
+        Add root</button
+      >&nbsp;
+
       <button
         id="addchild"
         [disabled]="newData.length == 0 || numSelected != 1"
         (click)="addchild(true)"
       >
-        addchild
-      </button>
+        Add child</button
+      >&nbsp;
+      <br />
+
       <button
         id="removeNode"
         [disabled]="numSelected != 1"
