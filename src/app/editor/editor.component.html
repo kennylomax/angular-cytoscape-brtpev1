@@ -1,19 +1,3 @@
-<button
-  [disabled]="numSelected != 1"
-  mat-raised-button
-  (click)="openDialog('rename')"
->
-  Rename
-</button>
-<button mat-raised-button (click)="openDialog('addroot')">Add Root</button>
-<button
-  [disabled]="numSelected != 1"
-  mat-raised-button
-  (click)="openDialog('addchild')"
->
-  Add Child
-</button>
-
 <form class="bod">
   Search:
   <input
@@ -36,24 +20,38 @@
 <table>
   <tr>
     <td valign="top">
-      Use:
-      <input id="newData" name="newData" type="text" [(ngModel)]="newData" /> to
-      ..
-      <button id="rename" (click)="rename()" [disabled]="numSelected != 1">
-        Rename node</button
-      >&nbsp;
-      <button id="addroot" (click)="addchild(false)">Add root</button>&nbsp;
+      <button type="button" mat-raised-button (click)="fileInput.click()">
+        Choose File
+      </button>
+
+      <input
+        style="display:none"
+        (change)="onFileSelected()"
+        #fileInput
+        type="file"
+        id="file"
+      />
 
       <button
-        id="addchild"
         [disabled]="numSelected != 1"
-        (click)="addchild(true)"
+        mat-raised-button
+        (click)="openDialog('rename')"
       >
-        Add child</button
-      >&nbsp;
-      <br />
+        Rename
+      </button>
+      <button mat-raised-button (click)="openDialog('addroot')">
+        Add Root
+      </button>
+      <button
+        [disabled]="numSelected != 1"
+        mat-raised-button
+        (click)="openDialog('addchild')"
+      >
+        Add Child
+      </button>
 
       <button
+        mat-raised-button
         id="removeNode"
         [disabled]="numSelected != 1"
         (click)="removeNode()"
@@ -61,6 +59,7 @@
         removeNode
       </button>
       <button
+        mat-raised-button
         id="addweight"
         [disabled]="numSelected == 0"
         (click)="adjustweight(1)"
@@ -68,14 +67,15 @@
         addweight
       </button>
       <button
+        mat-raised-button
         id="reduceweight"
         [disabled]="numSelected == 0"
         (click)="adjustweight(-1)"
       >
         reduceweight
       </button>
-      <button id="save" (click)="save()">save</button>
-      <input type="file" (change)="loadFile($event.target.files)" />
+
+      <button mat-raised-button id="save" (click)="save()">save</button>
 
       <div id="container">
         <div id="cy" (click)="evtListener()"></div>
@@ -83,6 +83,7 @@
 
       Listing: <span>{{ listing }}</span>
     </td>
+
     <td valign="top">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="name">
@@ -105,11 +106,13 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
     </td>
   </tr>
 </table>
+
 SelectedId
 <span>{{ selectedId }}</span
 >&nbsp;&nbsp; NumSelected &nbsp;<span>{{ numSelected }}</span

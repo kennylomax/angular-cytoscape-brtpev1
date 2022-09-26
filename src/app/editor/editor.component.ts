@@ -208,8 +208,11 @@ export class EditorComponent implements OnInit {
   }
   fileContent: string = '';
 
-  loadFile(fileList: FileList): void {
-    let file = fileList[0];
+  onFileSelected() {
+    const inputNode: any = document.querySelector('#file');
+    console.log('InputNode' + inputNode.files[0]);
+    if (!inputNode.files[0]) return;
+    var file = inputNode.files[0];
     let fileReader: FileReader = new FileReader();
     let self = this;
     fileReader.onloadend = function (x) {
