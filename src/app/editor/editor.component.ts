@@ -267,7 +267,7 @@ export class EditorComponent implements OnInit {
   }
 
   evtListener() {
-    this.cy.one('tap', (event) => {
+    this.cy.on('tap', (event) => {
       this.unselect();
       var evtTarget = event.target;
       if (evtTarget && evtTarget.isNode && evtTarget.isNode()) {

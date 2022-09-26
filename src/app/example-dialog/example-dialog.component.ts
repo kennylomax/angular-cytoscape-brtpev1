@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
@@ -18,5 +18,16 @@ export class ExampleDialogComponent {
 
   dialogChanging() {
     console.log('Dialog changing1');
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  onDialogClick(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.close();
+    }
+  }
+
+  close(): void {
+    this.dialogRef.close(this.data.choice);
   }
 }
