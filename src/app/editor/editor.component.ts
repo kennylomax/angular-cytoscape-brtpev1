@@ -8,6 +8,7 @@ import {
   ChangeDetectorRef,
   Injectable,
   NgZone,
+  Inject,
 } from '@angular/core';
 
 import cytoscape = require('cytoscape');
@@ -17,6 +18,10 @@ export interface Skills {
   name: string;
   id: string;
   gap: number;
+}
+export interface DialogData {
+  animal: string;
+  name: string;
 }
 const ELEMENT_DATA: Skills[] = [{ name: 'aaa', id: 'Hydrogen', gap: 1.0079 }];
 

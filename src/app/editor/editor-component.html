@@ -1,8 +1,4 @@
 <form class="bod">
-  SelectedId
-  <span>{{ selectedId }}</span
-  >&nbsp;&nbsp; NumSelected &nbsp;<span>{{ numSelected }}</span>
-
   Search:
   <input
     id="scratchPad"
@@ -26,6 +22,7 @@
 <table>
   <tr>
     <td valign="top">
+      <button mat-button (click)="openDialog()">Open dialog</button>
       <button
         id="rename"
         (click)="rename()"
@@ -104,5 +101,8 @@
     </td>
   </tr>
 </table>
-CY Json
+SelectedId
+<span>{{ selectedId }}</span
+>&nbsp;&nbsp; NumSelected &nbsp;<span>{{ numSelected }}</span
+>+ CY Json
 {{ cy.elements('node').data('name') }}
