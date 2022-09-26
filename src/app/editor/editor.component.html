@@ -1,3 +1,19 @@
+<button
+  [disabled]="numSelected != 1"
+  mat-raised-button
+  (click)="openDialog('rename')"
+>
+  Rename
+</button>
+<button mat-raised-button (click)="openDialog('addroot')">Add Root</button>
+<button
+  [disabled]="numSelected != 1"
+  mat-raised-button
+  (click)="openDialog('addchild')"
+>
+  Add Child
+</button>
+
 <form class="bod">
   Search:
   <input
@@ -23,24 +39,14 @@
       Use:
       <input id="newData" name="newData" type="text" [(ngModel)]="newData" /> to
       ..
-      <button
-        id="rename"
-        (click)="rename()"
-        [disabled]="newData.length == 0 || numSelected != 1"
-      >
+      <button id="rename" (click)="rename()" [disabled]="numSelected != 1">
         Rename node</button
       >&nbsp;
-      <button
-        id="addroot"
-        [disabled]="newData.length == 0"
-        (click)="addchild(false)"
-      >
-        Add root</button
-      >&nbsp;
+      <button id="addroot" (click)="addchild(false)">Add root</button>&nbsp;
 
       <button
         id="addchild"
-        [disabled]="newData.length == 0 || numSelected != 1"
+        [disabled]="numSelected != 1"
         (click)="addchild(true)"
       >
         Add child</button

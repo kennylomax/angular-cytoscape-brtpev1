@@ -1,18 +1,8 @@
-//TODO https://blues.io/blog/10-jsonata-examples/
-// {"nodes.data": nodes.data^(-gap)}
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  ViewChild,
-  ChangeDetectorRef,
-  Injectable,
-  NgZone,
-  Inject,
-} from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
 import cytoscape = require('cytoscape');
 import { saveAs } from 'file-saver';
+import { MatDialog } from '@angular/material';
+import { ExampleDialogComponent } from '../example-dialog/example-dialog.component';
 
 export interface Skills {
   name: string;
@@ -23,7 +13,6 @@ export interface DialogData {
   animal: string;
   name: string;
 }
-const ELEMENT_DATA: Skills[] = [{ name: 'aaa', id: 'Hydrogen', gap: 1.0079 }];
 
 @Component({
   selector: 'app-editor',
@@ -31,10 +20,32 @@ const ELEMENT_DATA: Skills[] = [{ name: 'aaa', id: 'Hydrogen', gap: 1.0079 }];
   styleUrls: ['./editor.component.css'],
 })
 export class EditorComponent implements OnInit {
+  constructor(public dialog: MatDialog) {}
+
+  openDialog(op: string): void {
+    let dialogRef = this.dialog.open(ExampleDialogComponent, {
+      data: { operation: op },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.updateFromChoice(JSON.stringify({ operation: op, choice: result }));
+    });
+  }
+
+  updateFromChoice(data) {
+    console.log('In update' + data);
+    const j = JSON.parse(data);
+    if (j.operation == 'rename' && j.choice && j.choice.length > 0)
+      this.rename(j.choice);
+    else if (j.operation == 'addroot' && j.choice && j.choice.length > 0)
+      this.addchild(false, j.choice);
+    else if (j.operation == 'addchild' && j.choice && j.choice.length > 0)
+      this.addchild(true, j.choice);
+  }
+
   cy: cytoscape.Core;
   selectedId: string = ''; //klx
   scratchPad: string = ''; //klx
-  newData: string = '';
   desc: string = '';
   // listing: string;
   numSelected: number = 0;
@@ -43,7 +54,7 @@ export class EditorComponent implements OnInit {
   x: number;
   y: number;
 
-  dataSource = ELEMENT_DATA; //Array(); //ELEMENT_DATA;
+  dataSource = [{ name: 'not', id: 'set', gap: 1.0079 }];
   displayedColumns: string[] = ['name', 'id', 'gap'];
 
   mystyle = [
@@ -172,13 +183,13 @@ export class EditorComponent implements OnInit {
     this.cy.json({ style: this.mystyle });
   }
 
-  rename() {
+  rename(choice: string) {
     if (this.numSelected != 1) return;
     let n = this.cy
       .nodes()
       .filter("[id='" + this.selectedId + "']")
       .first();
-    n.data('name', this.newData);
+    n.data('name', choice);
     this.updateTable();
   }
 
@@ -210,14 +221,14 @@ export class EditorComponent implements OnInit {
     fileReader.readAsText(file);
   }
 
-  addchild(hasparent: boolean) {
+  addchild(hasparent: boolean, choice: string) {
     if (hasparent && this.numSelected != 1) return;
     if (!this.x) {
       this.x = 100;
       this.y = 100;
     }
-    if (this.cy.filter("[name='" + this.newData + "']").size() > 0) {
-      console.log('Node with name ' + this.newData + 'already exists');
+    if (this.cy.filter("[name='" + choice + "']").size() > 0) {
+      console.log('Node with name ' + choice + 'already exists');
       return;
     }
 
@@ -229,7 +240,7 @@ export class EditorComponent implements OnInit {
         group: 'nodes',
         data: {
           type: 'node',
-          name: this.newData,
+          name: choice,
           id: newid,
           gap: 1,
           desc: '',
