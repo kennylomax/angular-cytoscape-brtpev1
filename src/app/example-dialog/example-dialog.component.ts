@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 @Component({
   selector: 'app-example-dialog',
   templateUrl: 'example-dialog.component.html',
+  styleUrls: ['./example-dialog.css'],
 })
 export class ExampleDialogComponent {
   constructor(

@@ -1,1 +1,5 @@
 <app-editor></app-editor>
+<button mat-raised-button (click)="openDialog()">Pick one</button>
+<span *ngIf="animal">
+  You choose: <i>{{ animal }}</i> <span> </span
+></span>

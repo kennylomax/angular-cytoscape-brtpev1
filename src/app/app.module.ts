@@ -16,12 +16,13 @@ import {
   MatFormFieldModule,
   MatInputModule,
 } from '@angular/material';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTableModule } from '@angular/material/table';
 import { ExampleDialogModule } from './example-dialog/example-dialog.module';
 
 @NgModule({
   imports: [
+    BrowserAnimationsModule,
     ExampleDialogModule,
     BrowserModule,
     FormsModule,
