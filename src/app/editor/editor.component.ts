@@ -222,7 +222,20 @@ export class EditorComponent implements OnInit {
       this.x = 100;
       this.y = 100;
     }
-    if (this.cy.filter("[name='" + choice + "']").size() > 0) {
+
+    if (
+      this.cy
+        .filter(function (element, i) {
+          console.log(
+            ' From ' +
+              element.data('name').toLowerCase() +
+              ' to ' +
+              choice.toLowerCase()
+          );
+          return element.data('name').toLowerCase() == choice.toLowerCase();
+        })
+        .size() > 0
+    ) {
       console.log('Node with name ' + choice + 'already exists');
       this.scratchPad = choice;
       this.search();
