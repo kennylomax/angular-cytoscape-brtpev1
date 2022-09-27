@@ -39,16 +39,11 @@ export class EditorComponent implements OnInit {
   }
 
   cy: cytoscape.Core;
-  selectedId: string = ''; //klx
-  scratchPad: string = ''; //klx
+  selectedId: string = '';
+  scratchPad: string = '';
   numMatches: number = 0;
   searching: boolean = false;
   fuzzySearching: boolean = false;
-
-  overview: any; //     this.overview = JSON.parse(this.cy.elements());
-
-  x: number;
-  y: number;
 
   dataSource = [{ name: 'not', id: 'set', gap: 1.0079 }];
   displayedColumns: string[] = ['name', 'gap'];
@@ -59,9 +54,9 @@ export class EditorComponent implements OnInit {
       style: {
         'text-valign': 'top',
         label: 'data(name)',
-        width: '20',
-        height: '20',
-        'font-size': 'mapData(gap, 0, 10, 0, 60)',
+        width: '30',
+        height: '30',
+        'font-size': 'mapData(gap, 0, 10, 15, 60)',
 
         'background-color': (ele) => {
           return this.colorIt(ele);
@@ -108,7 +103,7 @@ export class EditorComponent implements OnInit {
       boxSelectionEnabled: true,
     });
     this.cy.minZoom(0.2);
-    this.cy.maxZoom(2);
+    this.cy.maxZoom(1);
     this.updateTable();
   }
 
@@ -191,6 +186,7 @@ export class EditorComponent implements OnInit {
 
   redraw() {
     this.cy.json({ style: this.mystyle });
+    this.cy.fit(this.cy.elements(':selected'));
   }
 
   rename(choice: string) {
@@ -240,10 +236,6 @@ export class EditorComponent implements OnInit {
 
   addchild(hasparent: boolean, choice: string) {
     if (hasparent && this.numMatches != 1) return;
-    if (!this.x) {
-      this.x = 100;
-      this.y = 100;
-    }
     if (
       this.cy
         .filter(function (element, i) {
@@ -256,6 +248,13 @@ export class EditorComponent implements OnInit {
       this.search();
       this.cy.fit();
       return;
+    }
+
+    var x = 100;
+    var y = 100;
+    if (hasparent) {
+      x = this.cy.nodes(':selected').first().position('x');
+      y = this.cy.nodes(':selected').first().position('y');
     }
 
     var newid = this.generateUniqSerial();
@@ -272,7 +271,7 @@ export class EditorComponent implements OnInit {
           desc: '',
           level: newLevel,
         },
-        position: { x: this.x + 20, y: this.y + 20 },
+        position: { x: x + 20, y: y + 20 },
       },
     ]);
     if (hasparent)
@@ -281,13 +280,14 @@ export class EditorComponent implements OnInit {
           group: 'edges',
           data: {
             id: newid + '0',
+            name: 'edge' + newid,
             source: this.selectedId,
             target: newid,
           },
         },
       ]);
-    this.x += 20;
-    this.y += 20;
+    x += 20;
+    y += 20;
     this.selectedId = newid;
     this.scratchPad = choice;
     this.search();
@@ -302,8 +302,6 @@ export class EditorComponent implements OnInit {
       if (evtTarget && evtTarget.isNode && evtTarget.isNode()) {
         this.scratchPad = evtTarget.data('name');
         this.selectedId = evtTarget.data('id');
-        this.x = evtTarget.position('x');
-        this.y = evtTarget.position('y');
         this.numMatches = 1;
       } else if (evtTarget && evtTarget.isEdge && evtTarget.isEdge()) {
         console.log('this is an edge');

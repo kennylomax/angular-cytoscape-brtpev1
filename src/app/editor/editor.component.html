@@ -114,7 +114,14 @@
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Topic</th>
-          <td mat-cell *matCellDef="let element">{{ element.name }}&nbsp;</td>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            (click)="scratchPad = element.name; search()"
+          >
+            <u>{{ element.name }}</u
+            >&nbsp;
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="gap">
