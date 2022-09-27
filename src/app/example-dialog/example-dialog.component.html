@@ -1,10 +1,23 @@
 <div mat-dialog-content>
   Name:
   <mat-form-field appearance="outline">
-    <input matInput cdkFocusInitial [(ngModel)]="data.choice" />
+    <input
+      matInput
+      (keyup)="dialogChanging()"
+      cdkFocusInitial
+      [(ngModel)]="data.choice"
+    />
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button [mat-dialog-close]="data.choice">Ok</button>
+  <button color="primary" mat-raised-button (click)="onCancel()">Cancel</button>
+  <button
+    [disabled]="!enableok"
+    color="primary"
+    mat-raised-button
+    [mat-dialog-close]="data.choice"
+  >
+    Ok
+  </button>
+  <span style="color:red" [hidden]="enableok">&nbsp;Duplicate value</span>
 </div>

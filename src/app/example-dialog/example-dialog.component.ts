@@ -12,12 +12,17 @@ export class ExampleDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
+  enableok: boolean = true;
+
   onCancel(): void {
     this.dialogRef.close();
   }
 
   dialogChanging() {
-    console.log('Dialog changing1');
+    console.log('Dialog changing1 ' + JSON.stringify(this.data.choice));
+    this.enableok = !this.data.names.includes(
+      this.data.choice.trim().toLowerCase()
+    );
   }
 
   @HostListener('window:keyup', ['$event'])

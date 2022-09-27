@@ -19,8 +19,12 @@ export class EditorComponent implements OnInit {
   constructor(public dialog: MatDialog) {}
 
   openDialog(op: string): void {
+    var names = this.cy.nodes().map(function (ele) {
+      return ele.data('name').trim().toLowerCase();
+    });
+
     let dialogRef = this.dialog.open(ExampleDialogComponent, {
-      data: { operation: op },
+      data: { operation: op, names: names },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -186,6 +190,7 @@ export class EditorComponent implements OnInit {
 
   redraw() {
     this.cy.json({ style: this.mystyle });
+
     this.cy.fit(this.cy.elements(':selected'));
   }
 

@@ -27,3 +27,7 @@
   filter: alpha(opacity=20);
 }
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
+th,
+td {
+  padding: 5px;
+}
