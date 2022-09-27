@@ -15,6 +15,7 @@ import {
   MatCommonModule,
   MatFormFieldModule,
   MatInputModule,
+  MatSortModule,
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTableModule } from '@angular/material/table';
@@ -32,6 +33,7 @@ import { ExampleDialogModule } from './example-dialog/example-dialog.module';
     MatCommonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSortModule,
   ],
   declarations: [AppComponent, EditorComponent],
   providers: [],

@@ -48,6 +48,7 @@ export class EditorComponent implements OnInit {
   numMatches: number = 0;
   searching: boolean = false;
   fuzzySearching: boolean = false;
+  highlight: boolean = false;
 
   dataSource = [{ name: 'not', id: 'set', gap: 1.0079 }];
   displayedColumns: string[] = ['name', 'gap'];
@@ -61,7 +62,6 @@ export class EditorComponent implements OnInit {
         width: '30',
         height: '30',
         'font-size': 'mapData(gap, 0, 10, 15, 60)',
-
         'background-color': (ele) => {
           return this.colorIt(ele);
         },
@@ -85,6 +85,9 @@ export class EditorComponent implements OnInit {
     this.search();
   }
 
+  toggleHighlight() {
+    this.highlight = !this.highlight;
+  }
   colorIt(ele) {
     if (ele.selected()) return 'red';
     else if (ele.data('level') == 0) return '#82E0AA';

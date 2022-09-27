@@ -31,3 +31,8 @@ th,
 td {
   padding: 5px;
 }
+
+tr.mat-row {
+  border: 1px solid #e7e7e7;
+  height: 20px !important;
+}

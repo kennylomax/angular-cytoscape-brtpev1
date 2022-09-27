@@ -99,6 +99,15 @@
       <button color="primary" mat-raised-button id="save" (click)="save()">
         Save
       </button>
+      &nbsp;
+      <button
+        color="primary"
+        mat-raised-button
+        id="highlight"
+        (click)="toggleHighlight()"
+      >
+        Highlight
+      </button>
     </td>
   </tr>
 </table>
@@ -140,9 +149,3 @@
     </td>
   </tr>
 </table>
-
-SelectedId
-<span>{{ selectedId }}</span
->&nbsp;&nbsp; numMatches &nbsp;<span>{{ numMatches }}</span
->+ CY Json
-{{ cy.elements('node').data('name') }}
