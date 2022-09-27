@@ -1,59 +1,91 @@
 <table>
-  <tr>
+  <tr align="right">
+    <td align="left" valign="top">
+      <span
+        >&nbsp;SAP CX Commerce - Crowdsourcing our skill gaps <br />(v0.01)
+        ken.lomax@sap.com
+      </span>
+    </td>
     <td valign="top">
-      Search:
+      <button color="primary" mat-raised-button (click)="search()">
+        Search</button
+      >&nbsp;
+      <button color="primary" mat-raised-button (click)="fuzzySearch()">
+        FuzzySearch
+      </button>
+      &nbsp;
       <input
         id="scratchPad"
         name="scratchPad"
         type="text"
-        (input)="search()"
+        (input)="fuzzySearch()"
         [(ngModel)]="scratchPad"
-      />
+      /><br /><br />
+    </td>
+  </tr>
 
+  <tr>
+    <td colspan="2" align="middle" valign="top">
       <button
-        [disabled]="numSelected != 1"
+        color="primary"
+        [disabled]="numMatches != 1"
         mat-raised-button
         (click)="openDialog('rename')"
       >
         Rename
       </button>
-      <button mat-raised-button (click)="openDialog('addroot')">
+      &nbsp;
+      <button color="primary" mat-raised-button (click)="openDialog('addroot')">
         Add Root
       </button>
+      &nbsp;
       <button
-        [disabled]="numSelected != 1"
+        color="primary"
+        [disabled]="numMatches != 1"
         mat-raised-button
         (click)="openDialog('addchild')"
       >
         Add Child
       </button>
+      &nbsp;
 
       <button
+        color="primary"
         mat-raised-button
         id="removeNode"
-        [disabled]="numSelected != 1"
+        [disabled]="numMatches != 1"
         (click)="removeNode()"
       >
         Remove
       </button>
+      &nbsp;
       <button
+        color="primary"
         mat-raised-button
         id="addweight"
-        [disabled]="numSelected == 0"
+        [disabled]="numMatches == 0"
         (click)="adjustweight(1)"
       >
         Add Weight
       </button>
+      &nbsp;
       <button
+        color="primary"
         mat-raised-button
         id="reduceweight"
-        [disabled]="numSelected == 0"
+        [disabled]="numMatches == 0"
         (click)="adjustweight(-1)"
       >
         Reduce Weight
       </button>
-      <button type="button" mat-raised-button (click)="fileInput.click()">
-        Choose File
+      &nbsp;
+      <button
+        color="primary"
+        type="button"
+        mat-raised-button
+        (click)="fileInput.click()"
+      >
+        Load
       </button>
 
       <input
@@ -63,9 +95,16 @@
         type="file"
         id="file"
       />
-
-      <button mat-raised-button id="save" (click)="save()">Save</button>
-
+      &nbsp;
+      <button color="primary" mat-raised-button id="save" (click)="save()">
+        Save
+      </button>
+    </td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td valign="top">
       <div id="container">
         <div id="cy" (click)="evtListener()"></div>
       </div>
@@ -97,6 +136,6 @@
 
 SelectedId
 <span>{{ selectedId }}</span
->&nbsp;&nbsp; NumSelected &nbsp;<span>{{ numSelected }}</span
+>&nbsp;&nbsp; numMatches &nbsp;<span>{{ numMatches }}</span
 >+ CY Json
 {{ cy.elements('node').data('name') }}

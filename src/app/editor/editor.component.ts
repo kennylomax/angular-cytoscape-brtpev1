@@ -41,8 +41,10 @@ export class EditorComponent implements OnInit {
   cy: cytoscape.Core;
   selectedId: string = ''; //klx
   scratchPad: string = ''; //klx
-  desc: string = '';
-  numSelected: number = 0;
+  numMatches: number = 0;
+  searching: boolean = false;
+  fuzzySearching: boolean = false;
+
   overview: any; //     this.overview = JSON.parse(this.cy.elements());
 
   x: number;
@@ -81,17 +83,11 @@ export class EditorComponent implements OnInit {
   unselect() {
     this.scratchPad = '';
     this.selectedId = '';
-    this.desc = '';
     this.search();
   }
 
   colorIt(ele) {
-    if (
-      this.scratchPad.length > 0 &&
-      ele.data().name.toLowerCase().includes(this.scratchPad.toLowerCase())
-    )
-      return 'red';
-    else if (ele.selected()) return 'blue';
+    if (ele.selected()) return 'red';
     else if (ele.data('level') == 0) return '#82E0AA';
     else if (ele.data('level') == 1) return '#28B463';
     return '#186A3B';
@@ -136,7 +132,7 @@ export class EditorComponent implements OnInit {
 
   removeNode() {
     if (
-      this.numSelected == 1 &&
+      this.numMatches == 1 &&
       this.cy.filter("[name='" + this.scratchPad + "']").degree(false) <= 1
     )
       this.cy.remove('[name ="' + this.scratchPad + '"]');
@@ -156,14 +152,40 @@ export class EditorComponent implements OnInit {
     this.cy.filter("[id='" + id + "']").select();
     this.adjustweight(delta);
   }
+
   search() {
     const sp = this.scratchPad;
-    this.numSelected = this.cy.nodes().filter(function (element, i) {
-      return (
-        sp.length > 0 &&
-        element.data('name').toLowerCase().includes(sp.toLowerCase())
-      );
-    }).length;
+    this.cy.nodes().unselect();
+    this.cy
+      .nodes()
+      .filter(function (element, i) {
+        return (
+          sp.length > 0 &&
+          element.data('name').toLowerCase() == sp.toLowerCase()
+        );
+      })
+      .select();
+    this.numMatches = this.cy.elements(':selected').length;
+    this.searching = this.numMatches > 0;
+    this.fuzzySearching = false;
+    this.redraw();
+  }
+
+  fuzzySearch() {
+    const sp = this.scratchPad;
+    this.cy.nodes().unselect();
+    this.cy
+      .nodes()
+      .filter(function (element, i) {
+        return (
+          sp.length > 0 &&
+          element.data('name').toLowerCase().includes(sp.toLowerCase())
+        );
+      })
+      .select();
+    this.numMatches = this.cy.elements(':selected').length;
+    this.searching = false;
+    this.fuzzySearching = this.numMatches > 0;
     this.redraw();
   }
 
@@ -172,7 +194,7 @@ export class EditorComponent implements OnInit {
   }
 
   rename(choice: string) {
-    if (this.numSelected != 1) return;
+    if (this.numMatches != 1) return;
     let n = this.cy
       .nodes()
       .filter("[id='" + this.selectedId + "']")
@@ -217,21 +239,14 @@ export class EditorComponent implements OnInit {
   }
 
   addchild(hasparent: boolean, choice: string) {
-    if (hasparent && this.numSelected != 1) return;
+    if (hasparent && this.numMatches != 1) return;
     if (!this.x) {
       this.x = 100;
       this.y = 100;
     }
-
     if (
       this.cy
         .filter(function (element, i) {
-          console.log(
-            ' From ' +
-              element.data('name').toLowerCase() +
-              ' to ' +
-              choice.toLowerCase()
-          );
           return element.data('name').toLowerCase() == choice.toLowerCase();
         })
         .size() > 0
@@ -274,6 +289,9 @@ export class EditorComponent implements OnInit {
     this.x += 20;
     this.y += 20;
     this.selectedId = newid;
+    this.scratchPad = choice;
+    this.search();
+    this.cy.fit();
     this.redraw();
   }
 
@@ -284,10 +302,9 @@ export class EditorComponent implements OnInit {
       if (evtTarget && evtTarget.isNode && evtTarget.isNode()) {
         this.scratchPad = evtTarget.data('name');
         this.selectedId = evtTarget.data('id');
-        this.desc = evtTarget.data('desc');
         this.x = evtTarget.position('x');
         this.y = evtTarget.position('y');
-        this.numSelected = 1;
+        this.numMatches = 1;
       } else if (evtTarget && evtTarget.isEdge && evtTarget.isEdge()) {
         console.log('this is an edge');
       }
