@@ -146,7 +146,8 @@ export class EditorComponent implements OnInit, AfterViewInit {
         this.redraw();
       }
     } else {
-      this.cy.fit(this.cy.elements());
+      this.unselect();
+      this.cy.fit(this.cy.nodes());
       this.highlight = b;
       this.redraw();
     }
