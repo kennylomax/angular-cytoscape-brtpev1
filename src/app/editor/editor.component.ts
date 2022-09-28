@@ -214,9 +214,12 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
 
   adjustFromId(id, delta) {
+    this.unselect();
     this.cy.filter('true').unselect();
     this.cy.filter("[id='" + id + "']").select();
     this.adjustweight(delta);
+    this.scratchPad = this.cy.filter("[id='" + id + "']").data('name');
+    this.search();
   }
 
   search() {
