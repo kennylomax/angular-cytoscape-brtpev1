@@ -16,6 +16,7 @@
     "@types/cytoscape": "3.2.9",
     "@types/file-saver": "2.0.5",
     "@types/node": "10.12.23",
+    "@types/mousetrap": "^1.6.1",
     "angular-draggable-droppable": "4.6.0",
     "core-js": "2.6.3",
     "cytoscape": "3.23.0",
@@ -23,6 +24,7 @@
     "cytoscape-grid-guide": "2.2.1",
     "file-saver": "^2.0.5",
     "jquery": "3.6.1",
+    "mousetrap": "^1.6.5",
     "rxjs": "6.4.0",
     "zone.js": "0.8.29"
   },

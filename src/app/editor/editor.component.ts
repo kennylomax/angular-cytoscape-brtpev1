@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, AfterViewInit, OnInit } from '@angular/core';
+
 import cytoscape = require('cytoscape');
 import { saveAs } from 'file-saver';
 import { MatDialog } from '@angular/material';
 import { ExampleDialogComponent } from '../example-dialog/example-dialog.component';
+import Mousetrap = require('mousetrap');
 
 export interface Skills {
   name: string;
@@ -15,8 +17,36 @@ export interface Skills {
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.css'],
 })
-export class EditorComponent implements OnInit {
-  constructor(public dialog: MatDialog) {}
+export class EditorComponent implements OnInit, AfterViewInit {
+  constructor(public dialog: MatDialog, private elementRef: ElementRef) {}
+
+  ngAfterViewInit() {
+    const mousetrap1 = new Mousetrap();
+    mousetrap1.bind('R', () => {
+      this.openDialog('addroot');
+    });
+    mousetrap1.bind('C', () => {
+      this.openDialog('addchild');
+    });
+    mousetrap1.bind('D', () => {
+      this.removeNode();
+    });
+    mousetrap1.bind('A', () => {
+      this.adjustweight(1);
+    });
+    mousetrap1.bind('T', () => {
+      this.adjustweight(-1);
+    });
+    mousetrap1.bind('L', () => {
+      this.onFileSelected();
+    });
+    mousetrap1.bind('S', () => {
+      this.save();
+    });
+    mousetrap1.bind('H', () => {
+      this.setHighlight(!this.highlight);
+    });
+  }
 
   openDialog(op: string): void {
     var names = this.cy.nodes().map(function (ele) {
@@ -59,12 +89,35 @@ export class EditorComponent implements OnInit {
       style: {
         'text-valign': 'top',
         label: 'data(name)',
-        width: '30',
-        height: '30',
-        'font-size': 'mapData(gap, 0, 10, 15, 60)',
+        width: (ele) => {
+          if (this.highlight) {
+            if (ele.data('level') == 0) return 60;
+            return 1;
+          }
+          return 30;
+        },
+        height: (ele) => {
+          if (this.highlight) {
+            if (ele.data('level') == 0) return 60;
+            return 1;
+          }
+          return 30;
+        },
+        'font-size': (ele) => {
+          if (this.highlight) {
+            if (ele.data('level') == 0) return 60;
+            return 1;
+          }
+          var min = 15,
+            max = 60,
+            l = 0,
+            r = 60;
+          return min + ((ele.data('gap') - l) / (r - l)) * (max - min);
+        },
         'background-color': (ele) => {
           return this.colorIt(ele);
         },
+
         color: (ele) => {
           return this.colorIt(ele);
         },
@@ -85,8 +138,9 @@ export class EditorComponent implements OnInit {
     this.search();
   }
 
-  toggleHighlight() {
-    this.highlight = !this.highlight;
+  setHighlight(b: boolean) {
+    this.highlight = b;
+    this.redraw();
   }
   colorIt(ele) {
     if (ele.selected()) return 'red';
@@ -109,6 +163,7 @@ export class EditorComponent implements OnInit {
       },
       boxSelectionEnabled: true,
     });
+
     this.cy.minZoom(0.2);
     this.cy.maxZoom(1);
     this.updateTable();

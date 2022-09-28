@@ -20,9 +20,11 @@ export class ExampleDialogComponent {
 
   dialogChanging() {
     console.log('Dialog changing1 ' + JSON.stringify(this.data.choice));
-    this.enableok = !this.data.names.includes(
-      this.data.choice.trim().toLowerCase()
-    );
+    if (this.data.choice) {
+      this.enableok = !this.data.names.includes(
+        this.data.choice.trim().toLowerCase()
+      );
+    }
   }
 
   @HostListener('window:keyup', ['$event'])
