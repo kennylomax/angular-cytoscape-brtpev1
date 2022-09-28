@@ -138,9 +138,18 @@ export class EditorComponent implements OnInit, AfterViewInit {
     this.search();
   }
 
-  setHighlight(b: boolean) {
-    this.highlight = b;
-    this.redraw();
+  setHighlight(b: boolean, exitedbutton: boolean) {
+    if (exitedbutton) {
+      if (this.highlight) {
+        this.cy.fit(this.cy.elements());
+        this.highlight = b;
+        this.redraw();
+      }
+    } else {
+      this.cy.fit(this.cy.elements());
+      this.highlight = b;
+      this.redraw();
+    }
   }
   colorIt(ele) {
     if (ele.selected()) return 'red';

@@ -112,9 +112,9 @@
         color="primary"
         mat-raised-button
         id="highlight"
-        (mousedown)="setHighlight(true)"
-        (mouseup)="setHighlight(false)"
-        (mouseleave)="setHighlight(false)"
+        (mousedown)="setHighlight(true, false)"
+        (mouseup)="setHighlight(false, false)"
+        (mouseleave)="setHighlight(false, true)"
       >
         <u>H</u>ighlight
       </button>
