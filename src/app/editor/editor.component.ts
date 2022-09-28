@@ -43,9 +43,6 @@ export class EditorComponent implements OnInit, AfterViewInit {
     mousetrap1.bind('S', () => {
       this.save();
     });
-    mousetrap1.bind('H', () => {
-      this.setHighlight(!this.highlight);
-    });
   }
 
   openDialog(op: string): void {
@@ -92,6 +89,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
         width: (ele) => {
           if (this.highlight) {
             if (ele.data('level') == 0) return 60;
+            if (ele.data('level') == 1) return 40;
             return 1;
           }
           return 30;
@@ -99,6 +97,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
         height: (ele) => {
           if (this.highlight) {
             if (ele.data('level') == 0) return 60;
+            if (ele.data('level') == 1) return 40;
             return 1;
           }
           return 30;
@@ -106,6 +105,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
         'font-size': (ele) => {
           if (this.highlight) {
             if (ele.data('level') == 0) return 60;
+            if (ele.data('level') == 1) return 40;
             return 1;
           }
           var min = 15,
