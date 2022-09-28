@@ -61,7 +61,7 @@
         color="primary"
         mat-raised-button
         id="removeNode"
-        [disabled]="numMatches != 1"
+        [disabled]="!canRemoveNode"
         (click)="removeNode()"
       >
         <u>D</u>elete
@@ -116,7 +116,7 @@
         (mouseup)="setHighlight(false, false)"
         (mouseleave)="setHighlight(false, true)"
       >
-        Highlight
+        Orientate
       </button>
     </td>
   </tr>

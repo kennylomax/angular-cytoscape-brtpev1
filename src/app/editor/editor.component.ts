@@ -60,7 +60,6 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
 
   updateFromChoice(data) {
-    console.log('In update' + data);
     const j = JSON.parse(data);
     if (!j.choice || j.choice.trim().length == 0) return;
     var choice = j.choice.trim();
@@ -76,6 +75,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
   searching: boolean = false;
   fuzzySearching: boolean = false;
   highlight: boolean = false;
+  canRemoveNode: boolean = false;
 
   dataSource = [{ name: 'not', id: 'set', gap: 1.0079 }];
   displayedColumns: string[] = ['name', 'gap'];
@@ -195,6 +195,13 @@ export class EditorComponent implements OnInit, AfterViewInit {
         });
         console.log(elem.data('name') + ' ' + elem.data('gap'));
       });
+  }
+
+  setCanRemoveNode() {
+    this.canRemoveNode =
+      this.cy.$('node:selected').length == 1 &&
+      this.cy.$('node:selected').degree(false) <= 1;
+    console.log('canRemoveNode' + this.canRemoveNode);
   }
 
   removeNode() {
@@ -372,6 +379,16 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
 
   evtListener() {
+    var timeout;
+    var t = this;
+    this.cy.on('select', 'node', function (event) {
+      clearTimeout(timeout);
+      timeout = setTimeout(function () {
+        //window['selectedNodes'] = this.cy.$('node:selected');
+        t.setCanRemoveNode();
+      }, 100); // may have to adjust this val
+    });
+
     this.cy.on('tap', (event) => {
       this.unselect();
       var evtTarget = event.target;
